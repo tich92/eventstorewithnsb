@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{2B1D6D31-491A-47B3-A58A-D35B6271A57B}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderProcessor", "OrderProcessor\OrderProcessor.csproj", "{681F316E-CD0F-4129-B879-4B5099DD0FC7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "Contracts\Contracts.csproj", "{9D0D17CF-3B68-46E3-8496-B642ABC3CCC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStoreContext", "EventStoreContext\EventStoreContext.csproj", "{7EB4662A-BE0E-4AFC-B405-5A13C47B6AE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{9D0D17CF-3B68-46E3-8496-B642ABC3CCC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D0D17CF-3B68-46E3-8496-B642ABC3CCC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D0D17CF-3B68-46E3-8496-B642ABC3CCC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EB4662A-BE0E-4AFC-B405-5A13C47B6AE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EB4662A-BE0E-4AFC-B405-5A13C47B6AE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EB4662A-BE0E-4AFC-B405-5A13C47B6AE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EB4662A-BE0E-4AFC-B405-5A13C47B6AE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

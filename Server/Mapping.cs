@@ -12,9 +12,9 @@ namespace Server
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<ICreatedOrderEvent, CreateOrderCommand>();
-                cfg.CreateMap<ICreatedOrderItemEvent, AddOrderItemCommand>();
-                cfg.CreateMap<IPlacedOrderEvent, PlaceOrderCommand>();
+                cfg.CreateMap<CreatedOrderEvent, CreateOrderCommand>();
+                cfg.CreateMap<CreatedOrderItemEvent, AddOrderItemCommand>();
+                cfg.CreateMap<PlacedOrderEvent, PlaceOrderCommand>();
             });
 
             Mapper = config.CreateMapper();

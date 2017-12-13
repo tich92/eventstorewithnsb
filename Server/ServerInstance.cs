@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
+using Contracts.Commands;
 using NServiceBus;
+using EventStoreContext;
 
 namespace Server
 {
@@ -9,7 +11,12 @@ namespace Server
         {
             var endpointConfiguration = new EndpointConfiguration("Server");
 
-            endpointConfiguration.UseTransport<RabbitMQTransport>();
+            var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
+
+            var routing = transport.Routing();
+
+            routing.RouteToEndpoint(typeof(CheckOutOrderCommand).Assembly, "OrderProcessor");
+            
             endpointConfiguration.UsePersistence<InMemoryPersistence>();
 
             endpointConfiguration.UseSerialization<JsonSerializer>();
@@ -20,9 +27,12 @@ namespace Server
 
             var mapping = new Mapping();
 
+            var eventStore = new EventContext();
+
             endpointConfiguration.RegisterComponents(reg =>
             {
                 reg.ConfigureComponent(() => mapping.Mapper, DependencyLifecycle.SingleInstance);
+                reg.ConfigureComponent(() => eventStore, DependencyLifecycle.SingleInstance);
             });
 
             var endpointInstance = await Endpoint.Start(endpointConfiguration);

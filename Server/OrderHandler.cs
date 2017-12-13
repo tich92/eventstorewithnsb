@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using Contracts.Commands;
 using Contracts.Events;
+using EventStoreContext;
 using NServiceBus;
 
 namespace Server
@@ -10,30 +12,38 @@ namespace Server
         IHandleMessages<AddOrderItemCommand>,
         IHandleMessages<PlaceOrderCommand>
     {
-        private IMapper _mapper;
+        private IMapper mapper;
+        private EventContext eventContext;
 
-        public OrderHandler(IMapper mapper)
+        public OrderHandler(IMapper mapper, EventContext eventContext)
         {
-            _mapper = mapper;
+            this.mapper = mapper;
+            this.eventContext = eventContext;
         }
 
         public async Task Handle(CreateOrderCommand message, IMessageHandlerContext context)
         {
-            var @event = _mapper.Map<ICreatedOrderEvent>(message);
+            var @event = mapper.Map<CreatedOrderEvent>(message);
+
+            await eventContext.Add($"Order {message.Id}", @event);
 
             await context.Publish(@event);
         }
 
         public async Task Handle(AddOrderItemCommand message, IMessageHandlerContext context)
         {
-            var @event = _mapper.Map<ICreatedOrderItemEvent>(message);
+            var @event = mapper.Map<CreatedOrderItemEvent>(message);
+
+            await eventContext.Add($"Order {message.OrderId}", @event);
 
             await context.Publish(@event);
         }
 
         public async Task Handle(PlaceOrderCommand message, IMessageHandlerContext context)
         {
-            var @event = _mapper.Map<IPlacedOrderEvent>(message);
+            var @event = mapper.Map<PlacedOrderEvent>(message);
+
+            await eventContext.Add($"Order {message.OrderId}", @event);
 
             await context.Publish(@event);
         }

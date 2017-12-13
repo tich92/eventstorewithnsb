@@ -1,4 +1,6 @@
 ﻿using System;
+using Contracts.Commands;
+using NServiceBus;
 
 namespace Server
 {
@@ -22,6 +24,18 @@ namespace Server
 
                 if (line == "exit")
                     break;
+
+                if (line.Contains("check-out"))
+                {
+                    var commandItems = line.Split(' ');
+
+                    var orderId = Guid.Parse(commandItems[1]);
+
+                    instance.Send(new CheckOutOrderCommand
+                    {
+                        OrderId = orderId
+                    }).GetAwaiter().GetResult();
+                }
             }
 
             instance.Stop().GetAwaiter().GetResult();
