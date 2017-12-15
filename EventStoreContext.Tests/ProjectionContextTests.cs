@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
@@ -9,7 +10,6 @@ using EventStore.Common.Options;
 using EventStore.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using EventStore.ClientAPI.Common.Log;
-using EventStore.Projections.Core.Services.Management;
 
 namespace EventStoreContext.Tests
 {
@@ -70,7 +70,7 @@ namespace EventStoreContext.Tests
                     .Build());
 
             await connection.ConnectAsync();
-            
+
             connection.Connected += (sender, args) =>
             {
                 connection = args.Connection;
@@ -79,7 +79,7 @@ namespace EventStoreContext.Tests
             Assert.IsNotNull(connection);
         }
 
-        
+
 
         [TestMethod]
         public async Task GetAllProjectionsTest()
@@ -96,9 +96,55 @@ namespace EventStoreContext.Tests
         {
             var projectionManager = await InitProjectionManager();
 
-            //string name = ""
+            var name = "Order 30e65dda-4dc1-4876-a0d8-4d0108a11a21";
+            var projectionQuery = @"fromStream('Order 30e65dda-4dc1-4876-a0d8-4d0108a11a21')
+                                        .when({
+                                            $init:function(){
+                                                return {
+                                                    count : 0,
+                                                    events : []
+                                                };
+                                            },
+                                            $any: function(state, event){
+                                                if(event.eventType !== 'CreatedOrderEvent'){
+                                                    state.count++;
+            
+                                                    var data = {
+                                                        eventType : event.eventType,
+                                                        eventData : event.body
+                                                    };
+            
+                                                    state.events.push(data);
+                                                }
+                                            }
+                                        });";
 
-            //projectionManager.CreateContinuousAsync()
+            await projectionManager.CreateContinuousAsync(name, projectionQuery, credentials);
+
+            await projectionManager.EnableAsync(name);
+
+            var query = projectionManager.GetQueryAsync(name, credentials);
+
+            Assert.IsNotNull(query);
+            Assert.AreEqual(query, projectionQuery);
+        }
+
+        [TestMethod]
+        public async Task GetProjectionStateTest()
+        {
+            var projectionManager = await InitProjectionManager();
+
+            var all = await projectionManager.ListAllAsync(credentials);
+
+            Assert.IsNotNull(all);
+            Assert.IsTrue(all.Any());
+
+            foreach (var projection in all)
+            {
+                var state = await projectionManager.GetStateAsync(projection.Name, credentials);
+
+                Assert.IsNotNull(state);
+            }
         }
     }
 }

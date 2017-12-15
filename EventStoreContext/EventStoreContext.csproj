@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EventContext.cs" />
+    <Compile Include="EventMetaData.cs" />
     <Compile Include="EventModel.cs" />
     <Compile Include="Helpers\CredentialsHelper.cs" />
     <Compile Include="Helpers\EventHelpers.cs" />

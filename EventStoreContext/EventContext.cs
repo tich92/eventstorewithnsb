@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
 
 using EventStoreContext.Helpers;
+using Newtonsoft.Json;
 
 namespace EventStoreContext
 {
@@ -68,6 +71,15 @@ namespace EventStoreContext
             } while (lastEventNumber != -1);
 
             return eventList;
+        }
+
+        private byte[] GenerateMetaData()
+        {
+            var metaData = new EventMetaData {TimeStamp = DateTime.Now};
+
+            var json = JsonConvert.SerializeObject(metaData);
+
+            return Encoding.UTF8.GetBytes(json);
         }
     }
 }
