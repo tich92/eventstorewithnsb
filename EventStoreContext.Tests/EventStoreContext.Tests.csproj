@@ -51,15 +51,23 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="TypeScanner, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TypeScanner.1.0.1.0\lib\net40\TypeScanner.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ProjectionContextTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="EventStoreContextTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Contracts\Contracts.csproj">
+      <Project>{9d0d17cf-3b68-46e3-8496-b642abc3ccc3}</Project>
+      <Name>Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EventStoreContext\EventStoreContext.csproj">
       <Project>{7EB4662A-BE0E-4AFC-B405-5A13C47B6AE9}</Project>
       <Name>EventStoreContext</Name>
