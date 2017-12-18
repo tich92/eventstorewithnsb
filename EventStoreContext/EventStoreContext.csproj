@@ -51,6 +51,7 @@
     <Compile Include="EventModel.cs" />
     <Compile Include="Helpers\CredentialsHelper.cs" />
     <Compile Include="Helpers\EventHelpers.cs" />
+    <Compile Include="ProjectionState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -14,9 +14,16 @@ namespace EventStoreContext.Helpers
 
             var json = JsonConvert.SerializeObject(value);
             var data = Encoding.UTF8.GetBytes(json);
-            var eventName = value.GetType().Name;
+            var eventName = value.GetType().FullName;
+            
+            var metadata = new EventMetaData
+            {
+                TimeStamp = DateTime.UtcNow
+            };
 
-            return new EventData(Guid.NewGuid(), eventName, true, data, null);
+            var metadataJson = JsonConvert.SerializeObject(metadata);
+
+            return new EventData(Guid.NewGuid(), eventName, true, data, Encoding.UTF8.GetBytes(metadataJson));
         }
 
         internal static EventModel ParseEvent(this RecordedEvent @event)
