@@ -5,14 +5,13 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
 
 namespace EventStoreContext.Tests
 {
     [TestClass]
     public class EventStoreContextTest
     {
-        private EventContext eventContext;
+        private readonly EventContext eventContext;
         
         public EventStoreContextTest()
         {
@@ -61,15 +60,20 @@ namespace EventStoreContext.Tests
 
             foreach (var @event in events)
             {
-                var eventType = @event.EventType;
+                Assert.IsNotNull(@event);
+            }
+        }
 
-                var data = JsonConvert.DeserializeObject(@event.EventData, GetTypeByName(eventType));
+        [TestMethod]
+        public async Task ReadEventsForwardsFromStreamTest()
+        {
+            var streamName = "Order c0c8b62c-607e-4298-824c-1a73f7361f75";
 
-                Assert.IsNotNull(data);
+            var events = await eventContext.ReadStreamEventsForward(streamName);
 
-                AssemblyName assemblyName = data.GetType().Assembly.GetName();
-
-                Assert.AreEqual(assemblyName.Name, "Contracts");
+            foreach (var @event in events)
+            {
+                Assert.IsNotNull(@event);
             }
         }
     }
