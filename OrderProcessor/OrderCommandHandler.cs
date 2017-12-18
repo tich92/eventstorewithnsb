@@ -51,24 +51,7 @@ namespace OrderProcessor
             {
                 foreach (var @event in eventsResult)
                 {
-                    if (@event.EventType == "CreatedOrderEvent")
-                    {
-                        var data = JsonConvert.DeserializeObject<CreatedOrderEvent>(@event.EventData);
-
-                        await context.Publish(data);
-                    }
-                    else if (@event.EventType == "CreatedOrderItemEvent")
-                    {
-                        var data = JsonConvert.DeserializeObject<CreatedOrderItemEvent>(@event.EventData);
-
-                        await context.Publish(data);
-                    }
-                    else if (@event.EventType == "PlacedOrderEvent")
-                    {
-                        var data = JsonConvert.DeserializeObject<PlacedOrderEvent>(@event.EventData);
-
-                        await context.Publish(data);
-                    }
+                    await context.Publish(@event);
                 }
             }
         }

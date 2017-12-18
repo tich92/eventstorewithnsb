@@ -75,7 +75,7 @@
     <Compile Include="Commands\CalculateOrderCommand.cs" />
     <Compile Include="Data\OrderContext.cs" />
     <Compile Include="EndpointConfig.cs" />
-    <Compile Include="Mapping.cs" />
+    <Compile Include="MappingConfig.cs" />
     <Compile Include="Migrations\201712131104404_InitOrderContext.cs" />
     <Compile Include="Migrations\201712131104404_InitOrderContext.Designer.cs">
       <DependentUpon>201712131104404_InitOrderContext.cs</DependentUpon>

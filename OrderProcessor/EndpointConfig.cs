@@ -19,7 +19,7 @@ namespace OrderProcessor
             conventions.DefiningCommandsAs(type => type.Namespace != null && type.Namespace.Contains("Commands"));
             conventions.DefiningEventsAs(type => type.Namespace != null && type.Namespace.Contains("Events"));
 
-            var mapper = new Mapping();
+            var mapper = new MappingConfig();
 
             endpointConfiguration.RegisterComponents(reg =>
             {

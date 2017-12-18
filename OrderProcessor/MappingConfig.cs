@@ -4,11 +4,11 @@ using OrderProcessor.Models;
 
 namespace OrderProcessor
 {
-    public class Mapping
+    public class MappingConfig
     {
         public IMapper Mapper { get; set; }
 
-        public Mapping()
+        public MappingConfig()
         {
             var mappingConfig = new MapperConfiguration(cfg =>
             {
