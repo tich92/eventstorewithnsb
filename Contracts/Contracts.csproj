@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseCommand.cs" />
+    <Compile Include="BaseEvent.cs" />
     <Compile Include="Commands\AddOrderItemCommand.cs" />
     <Compile Include="Commands\CheckOutOrderCommand.cs" />
     <Compile Include="Commands\CreateOrderCommand.cs" />
