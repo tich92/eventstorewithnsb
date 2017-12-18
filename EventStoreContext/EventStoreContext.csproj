@@ -51,12 +51,15 @@
     <Compile Include="EventModel.cs" />
     <Compile Include="Helpers\CredentialsHelper.cs" />
     <Compile Include="Helpers\EventHelpers.cs" />
+    <Compile Include="Helpers\ParsingHelper.cs" />
     <Compile Include="ProjectionState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

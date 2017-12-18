@@ -26,18 +26,18 @@ namespace EventStoreContext.Helpers
             return new EventData(Guid.NewGuid(), eventName, true, data, Encoding.UTF8.GetBytes(metadataJson));
         }
 
-        internal static EventModel ParseEvent(this RecordedEvent @event)
-        {
-            if(@event == null)
-                throw new ArgumentNullException(nameof(@event));
+        //internal static EventModel ParseEvent(this RecordedEvent @event)
+        //{
+        //    if(@event == null)
+        //        throw new ArgumentNullException(nameof(@event));
 
-            var value = Encoding.UTF8.GetString(@event.Data);
+        //    var value = Encoding.UTF8.GetString(@event.Data);
             
-            return new EventModel()
-            {
-                EventData = value,
-                EventType = @event.EventType
-            };
-        }
+        //    return new EventModel()
+        //    {
+        //        EventData = value,
+        //        EventType = @event.EventType
+        //    };
+        //}
     }
 }

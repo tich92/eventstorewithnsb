@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
 
 using EventStoreContext.Helpers;
-using Newtonsoft.Json;
 
 namespace EventStoreContext
 {
@@ -49,16 +46,25 @@ namespace EventStoreContext
             return lastEvent?.Event?.OriginalEventNumber;
         }
 
-        public async Task<IEnumerable<EventModel>> ReadStreamEventsBackward(string streamName)
+        public async Task<IEnumerable<object>> ReadStreamEventsBackward(string streamName)
         {
             var lastEventNumber = await GetLastEventNumber(streamName);
 
-            return lastEventNumber == null ? new List<EventModel>() : await ReadResult(streamName, lastEventNumber.Value);
+            return lastEventNumber == null ? new List<object>() : await ReadResult(streamName, lastEventNumber.Value);
         }
 
-        private async Task<IEnumerable<EventModel>> ReadResult(string streamName, long lastEventNumber)
+        public async Task<IEnumerable<object>> ReadStreamEventsForward(string streamName)
         {
-            var eventList = new List<EventModel>();
+            var records =
+                await eventStoreConnection.ReadStreamEventsForwardAsync(streamName, 0, PageSize, false,
+                    CredentialsHelper.Default);
+
+            return records.Events.Select(@event => @event.Event.ParseEvent()).ToList();
+        }
+
+        private async Task<IEnumerable<object>> ReadResult(string streamName, long lastEventNumber)
+        {
+            var eventList = new List<object>();
 
             do
             {
@@ -71,15 +77,6 @@ namespace EventStoreContext
             } while (lastEventNumber != -1);
 
             return eventList;
-        }
-
-        private byte[] GenerateMetaData()
-        {
-            var metaData = new EventMetaData {TimeStamp = DateTime.Now};
-
-            var json = JsonConvert.SerializeObject(metaData);
-
-            return Encoding.UTF8.GetBytes(json);
         }
     }
 }
