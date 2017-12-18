@@ -10,6 +10,7 @@ using EventStore.Common.Options;
 using EventStore.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using EventStore.ClientAPI.Common.Log;
+using Newtonsoft.Json;
 
 namespace EventStoreContext.Tests
 {
@@ -96,32 +97,35 @@ namespace EventStoreContext.Tests
         {
             var projectionManager = await InitProjectionManager();
 
-            var name = "Order 30e65dda-4dc1-4876-a0d8-4d0108a11a21";
-            var projectionQuery = @"fromStream('Order 30e65dda-4dc1-4876-a0d8-4d0108a11a21')
-                                        .when({
-                                            $init:function(){
-                                                return {
-                                                    count : 0,
-                                                    events : []
-                                                };
-                                            },
-                                            $any: function(state, event){
-                                                if(event.eventType !== 'CreatedOrderEvent'){
-                                                    state.count++;
+            var name = "Order c0c8b62c-607e-4298-824c-1a73f7361f75";
             
-                                                    var data = {
-                                                        eventType : event.eventType,
-                                                        eventData : event.body
-                                                    };
+            var projectionQuery = @"fromStream('Order c0c8b62c-607e-4298-824c-1a73f7361f75')
+                            .when({
+                                $init:function(){
+                                    return {
+                                        events: []
+                                    };
+                                },
+                                $any: function(state, event){
+                                    
+                                    var metadata = JSON.parse(event.metadataRaw);
+                                    var timeStamp = metadata.TimeStamp;
+                                    
+                                    if(Date.parse(timeStamp) >= Date.parse('2017-12-15 18:20:36')){
+                                        var data = {
+                                            eventType : event.eventType,
+                                            eventData : event,
+                                            timeStamp : timeStamp
+                                        };
             
-                                                    state.events.push(data);
-                                                }
-                                            }
-                                        });";
+                                        state.events.push(data);
+                                    }
+                                }
+                            });";
 
             await projectionManager.CreateContinuousAsync(name, projectionQuery, credentials);
 
-            await projectionManager.EnableAsync(name);
+            await projectionManager.EnableAsync(name, credentials);
 
             var query = projectionManager.GetQueryAsync(name, credentials);
 
@@ -146,5 +150,76 @@ namespace EventStoreContext.Tests
                 Assert.IsNotNull(state);
             }
         }
+
+        [TestMethod]
+        public async Task UpdateProjectionTest()
+        {
+            var projectionManager = await InitProjectionManager();
+            
+            var name = "Order c0c8b62c-607e-4298-824c-1a73f7361f75";
+
+            var newQuery = @"fromStream('Order c0c8b62c-607e-4298-824c-1a73f7361f75')
+                            .when({
+                                $init:function(){
+                                    return {
+                                        events: []
+                                    };
+                                },
+                                $any: function(state, event){
+                                    
+                                    var metadata = JSON.parse(event.metadataRaw);
+                                    var timeStamp = metadata.TimeStamp;
+                                    
+                                    if(timeStamp && Date.parse(timeStamp) >= Date.parse('2017-12-15 18:20:36')){
+                                        var data = {
+                                            eventType : event.eventType,
+                                            eventData : event.body,
+                                            timeStamp : timeStamp
+                                        };
+            
+                                        state.events.push(data);
+                                    }
+                                }
+                            });";
+
+            var currentProjection = await projectionManager.GetQueryAsync(name);
+
+            if (newQuery != currentProjection)
+            {
+                await projectionManager.UpdateQueryAsync(name, newQuery, credentials);
+            }
+        }
+
+        [TestMethod]
+        public async Task GetByQueryTest()
+        {
+            var projectionName = "Order c0c8b62c-607e-4298-824c-1a73f7361f75";
+
+            var projectionManager = await InitProjectionManager();
+
+            var state = await projectionManager.GetStateAsync(projectionName, credentials);
+
+            Assert.IsNotNull(state);
+        }
+
+        [TestMethod]
+        public async Task GetResultTest()
+        {
+            var projectionManager = await InitProjectionManager();
+            var projectionName = "Order c0c8b62c-607e-4298-824c-1a73f7361f75";
+
+            var result = await projectionManager.GetResultAsync(projectionName, credentials);
+            
+            Assert.IsNotNull(result);
+        }
+    }
+
+    public class Converter
+    {
+        public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
+        {
+            MetadataPropertyHandling = MetadataPropertyHandling.ReadAhead,
+            DateParseHandling = DateParseHandling.None,
+        };
     }
 }
