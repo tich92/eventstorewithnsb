@@ -2,7 +2,7 @@
 
 namespace Contracts.Commands
 {
-    public class CreateOrderCommand
+    public class CreateOrderCommand : BaseCommand
     {
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }

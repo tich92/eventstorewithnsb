@@ -2,7 +2,7 @@
 
 namespace Contracts.Commands
 {
-    public class CheckOutOrderCommand
+    public class CheckOutOrderCommand : BaseCommand
     {
         public Guid OrderId { get; set; }
     }

@@ -2,7 +2,7 @@
 
 namespace Contracts.Commands
 {
-    public class PlaceOrderCommand
+    public class PlaceOrderCommand : BaseCommand
     {
         public PlaceOrderCommand(Guid orderId)
         {
