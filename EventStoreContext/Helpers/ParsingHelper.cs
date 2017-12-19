@@ -29,14 +29,16 @@ namespace EventStoreContext.Helpers
             return loadedAssemblies;
         }
 
-        public static object ParseEvent(this RecordedEvent @event)
+        public static EventModel ParseEvent(this RecordedEvent @event)
         {
             if(@event == null)
                 throw new ArgumentNullException(nameof(@event));
 
-            var data = Encoding.UTF8.GetString(@event.Data);
+            var json = Encoding.UTF8.GetString(@event.Data);
 
-            return JsonConvert.DeserializeObject(data, GetTypeByFullName(@event.EventType));
+            var data = JsonConvert.DeserializeObject(json, GetTypeByFullName(@event.EventType));
+            
+            return new EventModel(data, @event.EventNumber);
         }
     }
 }

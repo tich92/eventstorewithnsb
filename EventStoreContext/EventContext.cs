@@ -12,7 +12,7 @@ namespace EventStoreContext
     {
         private readonly IEventStoreConnection eventStoreConnection;
 
-        private const int PageSize = 100;
+        private const int PageSize = 4096;
 
         private static IPEndPoint DefaultTcp()
         {
@@ -31,29 +31,30 @@ namespace EventStoreContext
             eventStoreConnection.ConnectAsync().GetAwaiter().GetResult();
         }
 
-        public async Task Add<T>(string streamName, T value)
+        public async Task<SaveResult> AddAsync<T>(string streamName, T value)
             where T : class
         {
             var @event = value.ToEvent();
 
-            await eventStoreConnection.AppendToStreamAsync(streamName, ExpectedVersion.Any, @event);
+            var result = await eventStoreConnection.AppendToStreamAsync(streamName, ExpectedVersion.Any, @event);
+            return new SaveResult(result.NextExpectedVersion, result.LogPosition.CommitPosition);
         }
 
-        public async Task<long?> GetLastEventNumber(string streamName)
+        public async Task<long?> GetLastEventNumberAsync(string streamName)
         {
             var lastEvent = await eventStoreConnection.ReadEventAsync(streamName, -1, false, CredentialsHelper.Default);
 
             return lastEvent?.Event?.OriginalEventNumber;
         }
 
-        public async Task<IEnumerable<object>> ReadStreamEventsBackward(string streamName)
+        public async Task<IEnumerable<EventModel>> ReadStreamEventsBackwardAsync(string streamName)
         {
-            var lastEventNumber = await GetLastEventNumber(streamName);
+            var lastEventNumber = await GetLastEventNumberAsync(streamName);
 
-            return lastEventNumber == null ? new List<object>() : await ReadResult(streamName, lastEventNumber.Value);
+            return lastEventNumber == null ? new List<EventModel>() : await ReadResult(streamName, lastEventNumber.Value);
         }
 
-        public async Task<IEnumerable<object>> ReadStreamEventsForward(string streamName)
+        public async Task<IEnumerable<EventModel>> ReadStreamEventsForwardAsync(string streamName)
         {
             var records =
                 await eventStoreConnection.ReadStreamEventsForwardAsync(streamName, 0, PageSize, false,
@@ -62,9 +63,37 @@ namespace EventStoreContext
             return records.Events.Select(@event => @event.Event.ParseEvent()).ToList();
         }
 
-        private async Task<IEnumerable<object>> ReadResult(string streamName, long lastEventNumber)
+        public async Task<IEnumerable<EventModel>> ReadAllEventsForwardAsync()
         {
-            var eventList = new List<object>();
+            var records =
+                await eventStoreConnection.ReadAllEventsForwardAsync(Position.Start, PageSize, false,
+                    CredentialsHelper.Default);
+
+            return records.Events.Select(@event => @event.Event.ParseEvent()).ToList();
+        }
+
+        public async Task<IEnumerable<EventModel>> ReadAllEventsBackwardAsync()
+        {
+            var records =
+                await eventStoreConnection.ReadAllEventsBackwardAsync(Position.Start, PageSize, false,
+                    CredentialsHelper.Default);
+
+            return records.Events.Select(@event => @event.Event.ParseEvent()).ToList();
+        }
+
+        public async Task<List<string>> ReadAllStreamsAsync()
+        {
+            var streams = await eventStoreConnection.ReadAllEventsForwardAsync(Position.Start, PageSize, false,
+                CredentialsHelper.Default);
+
+            var streamList = streams.Events.Where(s => !s.Event.EventStreamId.Contains("$")).Select(s => s.Event.EventStreamId).Distinct().ToList();
+
+            return streamList;
+        }
+
+        private async Task<IEnumerable<EventModel>> ReadResult(string streamName, long lastEventNumber)
+        {
+            var eventList = new List<EventModel>();
 
             do
             {

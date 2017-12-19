@@ -1,13 +1,14 @@
-﻿using Newtonsoft.Json;
-
-namespace EventStoreContext
+﻿namespace EventStoreContext
 {
     public class EventModel
     {
-        [JsonProperty("eventType")]
-        public string EventType { get; set; }
+        public object Data { get; set; }
+        public long EventNumber { get; set; }
 
-        [JsonProperty("eventData")]
-        public string EventData { get; set; }
+        public EventModel(object data, long eventNumber)
+        {
+            Data = data;
+            EventNumber = eventNumber;
+        }
     }
 }

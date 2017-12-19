@@ -2,5 +2,6 @@
 {
     public class ClientEvent
     {
+        public long EventNumber { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Contracts.Commands;
+using Contracts;
 using NServiceBus;
 
 namespace Client
@@ -13,7 +13,7 @@ namespace Client
             var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
 
             var routing = transport.Routing();
-            routing.RouteToEndpoint(typeof(CreateOrderCommand).Assembly, "Server");
+            routing.RouteToEndpoint(typeof(BaseCommand).Assembly, "Server");
 
             endpointConfiguration.UsePersistence<InMemoryPersistence>();
             endpointConfiguration.UseSerialization<JsonSerializer>();

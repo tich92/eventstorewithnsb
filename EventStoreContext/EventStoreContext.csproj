@@ -54,6 +54,7 @@
     <Compile Include="Helpers\ParsingHelper.cs" />
     <Compile Include="ProjectionState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SaveResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -48,6 +48,16 @@ namespace Client
 
                     orderProducer.PlaceOrder(orderId).GetAwaiter().GetResult();
                 }
+                else if(line.Contains("cancel"))
+                {
+                    var commandItems = line.Split(' ');
+
+                    var orderKey = int.Parse(commandItems[1]);
+
+                    var orderId = persistence.OrderDictionary.FirstOrDefault(o => o.Key == orderKey).Value;
+
+                    orderProducer.CancelOrder(orderId).GetAwaiter().GetResult();
+                }
             }
 
             Console.WriteLine("Close client . . .");
