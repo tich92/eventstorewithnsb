@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using EventStore.ClientAPI;
+using EventStoreContext.Models;
 using Newtonsoft.Json;
 
 namespace EventStoreContext.Helpers

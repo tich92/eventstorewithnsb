@@ -106,7 +106,7 @@ namespace EventStoreContext.Tests
         [TestMethod]
         public async Task ReadAllStreamsTest()
         {
-            var streams = await eventContext.ReadAllStreamsAsync();
+            var streams = await eventContext.GetSrteamListAsync();
 
             Assert.IsNotNull(streams);
         }

@@ -25,7 +25,10 @@ namespace Server
         {
             var @event = mapper.Map<CreatedOrderEvent>(message);
 
-            await eventContext.AddAsync($"Order {message.Id}", @event);
+            var result = await eventContext.AddAsync($"Order {message.Id}", @event);
+
+            @event.LogPosition = result.LogPosition;
+            @event.NextExpectedVersion = result.NextExpectedVersion;
 
             await context.Publish(@event);
         }
@@ -34,8 +37,11 @@ namespace Server
         {
             var @event = mapper.Map<CreatedOrderItemEvent>(message);
 
-            await eventContext.AddAsync($"Order {message.OrderId}", @event);
-
+            var result = await eventContext.AddAsync($"Order {message.OrderId}", @event);
+            
+            @event.LogPosition = result.LogPosition;
+            @event.NextExpectedVersion = result.NextExpectedVersion;
+            
             await context.Publish(@event);
         }
 
@@ -43,7 +49,10 @@ namespace Server
         {
             var @event = mapper.Map<PlacedOrderEvent>(message);
 
-            await eventContext.AddAsync($"Order {message.OrderId}", @event);
+            var result = await eventContext.AddAsync($"Order {message.OrderId}", @event);
+
+            @event.LogPosition = result.LogPosition;
+            @event.NextExpectedVersion = result.NextExpectedVersion;
 
             await context.Publish(@event);
         }
@@ -52,7 +61,10 @@ namespace Server
         {
             var @event = mapper.Map<CancelOrderEvent>(message);
 
-            await eventContext.AddAsync($"Order {message.OrderId}", @event);
+            var result = await eventContext.AddAsync($"Order {message.OrderId}", @event);
+            
+            @event.LogPosition = result.LogPosition;
+            @event.NextExpectedVersion = result.NextExpectedVersion;
 
             await context.Publish(@event);
         }

@@ -36,6 +36,10 @@ namespace Server
                         OrderId = orderId
                     }).GetAwaiter().GetResult();
                 }
+                else if (line == "order-processor-restore")
+                {
+                    instance.Send(new RestoreOrdersCommand()).GetAwaiter().GetResult();
+                }
             }
 
             instance.Stop().GetAwaiter().GetResult();

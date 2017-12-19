@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using EventStore.ClientAPI;
 
 using EventStoreContext.Helpers;
+using EventStoreContext.Models;
 
 namespace EventStoreContext
 {
@@ -81,12 +82,14 @@ namespace EventStoreContext
             return records.Events.Select(@event => @event.Event.ParseEvent()).ToList();
         }
 
-        public async Task<List<string>> ReadAllStreamsAsync()
+        public async Task<List<string>> GetSrteamListAsync()
         {
             var streams = await eventStoreConnection.ReadAllEventsForwardAsync(Position.Start, PageSize, false,
                 CredentialsHelper.Default);
 
-            var streamList = streams.Events.Where(s => !s.Event.EventStreamId.Contains("$")).Select(s => s.Event.EventStreamId).Distinct().ToList();
+            //TODO: FOR TESTING READ STREAMS!!!
+            var streamList = streams.Events.Where(s => s.Event.EventStreamId.StartsWith("Order"))
+                .Select(s => s.Event.EventStreamId).Distinct().ToList();
 
             return streamList;
         }

@@ -75,6 +75,7 @@
     <Compile Include="Commands\CalculateOrderCommand.cs" />
     <Compile Include="Data\OrderContext.cs" />
     <Compile Include="EndpointConfig.cs" />
+    <Compile Include="ExecuteEventProcessor.cs" />
     <Compile Include="MappingConfig.cs" />
     <Compile Include="Migrations\201712131104404_InitOrderContext.cs" />
     <Compile Include="Migrations\201712131104404_InitOrderContext.Designer.cs">
@@ -92,8 +93,8 @@
     <Compile Include="Models\Entity.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderItem.cs" />
-    <Compile Include="OrderCommandHandler.cs" />
-    <Compile Include="OrderHandler.cs" />
+    <Compile Include="Handlers\OrderCommandHandler.cs" />
+    <Compile Include="Handlers\OrderHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

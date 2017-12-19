@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EventStoreContext
+namespace EventStoreContext.Models
 {
     public class EventMetaData
     {

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using EventStoreContext.Models;
 using Newtonsoft.Json;
 
 namespace EventStoreContext.Helpers
@@ -13,7 +14,7 @@ namespace EventStoreContext.Helpers
     {
         private static Type GetTypeByFullName(string fullName)
         {
-            return GetReferencedAssemblies().SelectMany(t => t.GetTypes()).First(t => t.FullName == fullName);
+            return GetReferencedAssemblies().SelectMany(t => t.GetTypes()).First(t => t.FullName != null && t.FullName.Contains(fullName));
         }
 
         private static IEnumerable<Assembly> GetReferencedAssemblies()

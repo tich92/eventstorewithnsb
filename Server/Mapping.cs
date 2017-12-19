@@ -12,10 +12,17 @@ namespace Server
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<CreatedOrderEvent, CreateOrderCommand>();
-                cfg.CreateMap<CreatedOrderItemEvent, AddOrderItemCommand>();
-                cfg.CreateMap<PlacedOrderEvent, PlaceOrderCommand>();
-                cfg.CreateMap<CancelOrderEvent, CancelOrderCommand>();
+                cfg.CreateMap<CreatedOrderEvent, CreateOrderCommand>()
+                    .ForMember(dest => dest.NextExpectedVersion, opt => opt.MapFrom(src => src.NextExpectedVersion));
+
+                cfg.CreateMap<CreatedOrderItemEvent, AddOrderItemCommand>()
+                    .ForMember(dest => dest.NextExpectedVersion, opt => opt.MapFrom(src => src.NextExpectedVersion));
+
+                cfg.CreateMap<PlacedOrderEvent, PlaceOrderCommand>()
+                    .ForMember(dest => dest.NextExpectedVersion, opt => opt.MapFrom(src => src.NextExpectedVersion));
+
+                cfg.CreateMap<CancelOrderEvent, CancelOrderCommand>()
+                    .ForMember(dest => dest.NextExpectedVersion, opt => opt.MapFrom(src => src.NextExpectedVersion));
             });
 
             Mapper = config.CreateMapper();

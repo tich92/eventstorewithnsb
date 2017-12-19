@@ -4,14 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Contracts.Commands;
-using Contracts.Events;
 using EventStoreContext;
-using Newtonsoft.Json;
+using EventStoreContext.Models;
 using NServiceBus;
 using OrderProcessor.Commands;
 using OrderProcessor.Data;
 
-namespace OrderProcessor
+namespace OrderProcessor.Handlers
 {
     public class OrderCommandHandler : IHandleMessages<CalculateOrderCommand>,
         IHandleMessages<CheckOutOrderCommand>
@@ -47,9 +46,10 @@ namespace OrderProcessor
         {
             var eventsResult = await eventContext.ReadStreamEventsBackwardAsync($"Order {message.OrderId}");
 
-            if (eventsResult.Any())
+            var eventModels = eventsResult as EventModel[] ?? eventsResult.ToArray();
+            if (eventModels.Any())
             {
-                foreach (var @event in eventsResult)
+                foreach (var @event in eventModels)
                 {
                     await context.Publish(@event);
                 }

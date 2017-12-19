@@ -26,6 +26,7 @@ namespace OrderProcessor
                 reg.ConfigureComponent(() => new OrderContext("OrderContext"), DependencyLifecycle.InstancePerCall);
                 reg.ConfigureComponent(() => mapper.Mapper, DependencyLifecycle.SingleInstance);
                 reg.ConfigureComponent(() => new EventContext(), DependencyLifecycle.SingleInstance);
+                reg.ConfigureComponent(() => new ProjectionContext(), DependencyLifecycle.SingleInstance);
 
             });
 

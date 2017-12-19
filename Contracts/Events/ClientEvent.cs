@@ -2,6 +2,7 @@
 {
     public class ClientEvent
     {
-        public long EventNumber { get; set; }
+        public long NextExpectedVersion { get; set; }
+        public long LogPosition { get; set; }
     }
 }

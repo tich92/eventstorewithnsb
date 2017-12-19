@@ -1,4 +1,4 @@
-﻿namespace EventStoreContext
+﻿namespace EventStoreContext.Models
 {
     public class EventModel
     {

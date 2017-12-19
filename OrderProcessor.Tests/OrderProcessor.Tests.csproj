@@ -80,7 +80,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntityFrameworkMockHelper.cs" />
-    <Compile Include="ExecuteEventProcessor.cs" />
     <Compile Include="MappingTestConfig.cs" />
     <Compile Include="MockedDbContext.cs" />
     <Compile Include="OrderHandlerTests.cs" />

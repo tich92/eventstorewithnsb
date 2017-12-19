@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NServiceBus.Testing;
 using OrderProcessor.Data;
 using EventStoreContext;
+using EventStoreContext.Models;
+using NServiceBus;
+using OrderProcessor.Handlers;
 
 namespace OrderProcessor.Tests
 {
@@ -17,19 +22,23 @@ namespace OrderProcessor.Tests
 
         private readonly MappingTestConfig mappingTestConfig;
 
+        private readonly OrderContext orderContext;
+
         const string StreamName = "Order c0c8b62c-607e-4298-824c-1a73f7361f75";
 
         public OrderHandlerTests()
         {
             eventContext = new EventContext();
 
-            var mockOrderDbSet = new MockedDbContext<OrderContext>();
+            var mockOrderContext = new MockedDbContext<OrderContext>();
 
-            mockOrderDbSet.MockTables();
+            mockOrderContext.MockTables();
+
+            orderContext = mockOrderContext.Object;
 
             var mappingConfig = new MappingConfig();
 
-            orderHandler = new OrderHandler(mappingConfig.Mapper, mockOrderDbSet.Object);
+            orderHandler = new OrderHandler(mappingConfig.Mapper, mockOrderContext.Object, eventContext);
             mappingTestConfig = new MappingTestConfig();
         }
 
@@ -70,6 +79,36 @@ namespace OrderProcessor.Tests
                     throw e;
                 }
             }
+        }
+
+        [TestMethod]
+        public async Task PerformAllEventsTest()
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            var streams = await eventContext.GetSrteamListAsync();
+
+            Assert.IsNotNull(streams);
+            Assert.IsTrue(streams.Any());
+
+            var eventProcessor = new ExecuteEventProcessor(orderContext,eventContext, mappingTestConfig.Mapper, orderHandler, new TestableMessageHandlerContext());
+
+            foreach (var streamName in streams)
+            {
+                try
+                {
+                    await eventProcessor.PerformEventsByStreamAsync(streamName);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                }
+            }
+
+            stopwatch.Stop();
+            Debug.WriteLine(stopwatch.Elapsed);
+
         }
     }
 }

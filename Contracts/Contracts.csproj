@@ -48,6 +48,7 @@
     <Compile Include="Commands\CheckOutOrderCommand.cs" />
     <Compile Include="Commands\CreateOrderCommand.cs" />
     <Compile Include="Commands\PlaceOrderCommand.cs" />
+    <Compile Include="Commands\RestoreOrdersCommand.cs" />
     <Compile Include="Events\CancelOrderEvent.cs" />
     <Compile Include="Events\ClientEvent.cs" />
     <Compile Include="Events\CreatedOrderItemEvent.cs" />
