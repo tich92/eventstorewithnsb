@@ -45,7 +45,7 @@ namespace OrderProcessor
 
         public async Task Handle(CheckOutOrderCommand message, IMessageHandlerContext context)
         {
-            var eventsResult = await eventContext.ReadStreamEventsBackward($"Order {message.OrderId}");
+            var eventsResult = await eventContext.ReadStreamEventsBackwardAsync($"Order {message.OrderId}");
 
             if (eventsResult.Any())
             {

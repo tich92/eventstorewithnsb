@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Entity;
+using OrderProcessor.Migrations;
 using OrderProcessor.Models;
 
 namespace OrderProcessor.Data
@@ -13,8 +14,16 @@ namespace OrderProcessor.Data
         
         public OrderContext(string configName) : base(configName)
         {
-            
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<OrderContext, Configuration>());
+
         }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            Database.SetInitializer<OrderContext>(null);
+            base.OnModelCreating(modelBuilder);
+        }
+
 
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<OrderItem> OrderItems { get; set; }

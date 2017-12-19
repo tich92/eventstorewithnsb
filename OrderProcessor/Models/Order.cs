@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace OrderProcessor.Models
 {
-    public class Order
+    public class Order : Entity
     {
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
@@ -29,6 +29,11 @@ namespace OrderProcessor.Models
         public void Place()
         {
             Status = OrderStatus.Place;
+        }
+
+        public void Cancel()
+        {
+            Status = OrderStatus.Cancel;
         }
     }
 

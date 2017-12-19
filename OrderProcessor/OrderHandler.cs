@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -14,7 +13,8 @@ namespace OrderProcessor
 {
     public class OrderHandler : IHandleMessages<CreatedOrderEvent>,
         IHandleMessages<CreatedOrderItemEvent>,
-        IHandleMessages<PlacedOrderEvent>
+        IHandleMessages<PlacedOrderEvent>,
+        IHandleMessages<CancelOrderEvent>
     {
         private readonly IMapper mapper;
         private readonly OrderContext orderContext;
@@ -59,7 +59,20 @@ namespace OrderProcessor
             order.Place();
 
             orderContext.Orders.Attach(order);
-            orderContext.Entry(order).State = EntityState.Modified;
+
+            await orderContext.SaveChangesAsync();
+        }
+
+        public async Task Handle(CancelOrderEvent message, IMessageHandlerContext context)
+        {
+            var order = orderContext.Orders.FirstOrDefault(o => o.Id == message.OrderId);
+
+            if(order == null)
+                throw new ArgumentNullException(nameof(order));
+
+            order.Cancel();
+
+            orderContext.Orders.Attach(order);
 
             await orderContext.SaveChangesAsync();
         }

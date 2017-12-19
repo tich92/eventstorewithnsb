@@ -84,7 +84,12 @@
     <Compile Include="Migrations\201712131242234_ChangeOrderContext.Designer.cs">
       <DependentUpon>201712131242234_ChangeOrderContext.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201712190902188_AddEventStoreMetaData.cs" />
+    <Compile Include="Migrations\201712190902188_AddEventStoreMetaData.Designer.cs">
+      <DependentUpon>201712190902188_AddEventStoreMetaData.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Entity.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderItem.cs" />
     <Compile Include="OrderCommandHandler.cs" />
@@ -111,6 +116,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201712131242234_ChangeOrderContext.resx">
       <DependentUpon>201712131242234_ChangeOrderContext.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712190902188_AddEventStoreMetaData.resx">
+      <DependentUpon>201712190902188_AddEventStoreMetaData.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
