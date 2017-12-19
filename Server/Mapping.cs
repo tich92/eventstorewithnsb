@@ -15,6 +15,7 @@ namespace Server
                 cfg.CreateMap<CreatedOrderEvent, CreateOrderCommand>();
                 cfg.CreateMap<CreatedOrderItemEvent, AddOrderItemCommand>();
                 cfg.CreateMap<PlacedOrderEvent, PlaceOrderCommand>();
+                cfg.CreateMap<CancelOrderEvent, CancelOrderCommand>();
             });
 
             Mapper = config.CreateMapper();

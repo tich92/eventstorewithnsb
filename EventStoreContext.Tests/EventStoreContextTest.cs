@@ -56,7 +56,7 @@ namespace EventStoreContext.Tests
         {
             var streamName = "Order c0c8b62c-607e-4298-824c-1a73f7361f75";
 
-            var events = await eventContext.ReadStreamEventsBackward(streamName);
+            var events = await eventContext.ReadStreamEventsBackwardAsync(streamName);
 
             foreach (var @event in events)
             {
@@ -69,12 +69,46 @@ namespace EventStoreContext.Tests
         {
             var streamName = "Order c0c8b62c-607e-4298-824c-1a73f7361f75";
 
-            var events = await eventContext.ReadStreamEventsForward(streamName);
+            var events = await eventContext.ReadStreamEventsForwardAsync(streamName);
 
             foreach (var @event in events)
             {
                 Assert.IsNotNull(@event);
             }
+        }
+
+        [TestMethod]
+        public async Task ReadAllEventsForwardTest()
+        {
+            var events = await eventContext.ReadAllEventsForwardAsync();
+
+            Assert.IsNotNull(events);
+
+            foreach (var @event in events)
+            {
+                Assert.IsNotNull(@event);
+            }
+        }
+
+        [TestMethod]
+        public async Task ReadAllEventsBackwardTest()
+        {
+            var events = await eventContext.ReadAllEventsBackwardAsync();
+
+            Assert.IsNotNull(events);
+
+            foreach (var @event in events)
+            {
+                Assert.IsNotNull(@event);
+            }
+        }
+
+        [TestMethod]
+        public async Task ReadAllStreamsTest()
+        {
+            var streams = await eventContext.ReadAllStreamsAsync();
+
+            Assert.IsNotNull(streams);
         }
     }
 }

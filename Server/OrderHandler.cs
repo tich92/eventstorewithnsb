@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using Contracts.Commands;
 using Contracts.Events;
@@ -10,7 +9,8 @@ namespace Server
 {
     public class OrderHandler : IHandleMessages<CreateOrderCommand>,
         IHandleMessages<AddOrderItemCommand>,
-        IHandleMessages<PlaceOrderCommand>
+        IHandleMessages<PlaceOrderCommand>,
+        IHandleMessages<CancelOrderCommand>
     {
         private IMapper mapper;
         private EventContext eventContext;
@@ -25,7 +25,7 @@ namespace Server
         {
             var @event = mapper.Map<CreatedOrderEvent>(message);
 
-            await eventContext.Add($"Order {message.Id}", @event);
+            await eventContext.AddAsync($"Order {message.Id}", @event);
 
             await context.Publish(@event);
         }
@@ -34,7 +34,7 @@ namespace Server
         {
             var @event = mapper.Map<CreatedOrderItemEvent>(message);
 
-            await eventContext.Add($"Order {message.OrderId}", @event);
+            await eventContext.AddAsync($"Order {message.OrderId}", @event);
 
             await context.Publish(@event);
         }
@@ -43,7 +43,16 @@ namespace Server
         {
             var @event = mapper.Map<PlacedOrderEvent>(message);
 
-            await eventContext.Add($"Order {message.OrderId}", @event);
+            await eventContext.AddAsync($"Order {message.OrderId}", @event);
+
+            await context.Publish(@event);
+        }
+
+        public async Task Handle(CancelOrderCommand message, IMessageHandlerContext context)
+        {
+            var @event = mapper.Map<CancelOrderEvent>(message);
+
+            await eventContext.AddAsync($"Order {message.OrderId}", @event);
 
             await context.Publish(@event);
         }

@@ -1,15 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using NServiceBus.Testing;
 using OrderProcessor.Data;
 using EventStoreContext;
-using OrderProcessor.Models;
-using System.Linq.Expressions;
-using System;
 
 namespace OrderProcessor.Tests
 {
@@ -19,6 +14,8 @@ namespace OrderProcessor.Tests
         private readonly OrderHandler orderHandler;
 
         private readonly EventContext eventContext;
+
+        private readonly MappingTestConfig mappingTestConfig;
 
         const string StreamName = "Order c0c8b62c-607e-4298-824c-1a73f7361f75";
 
@@ -31,13 +28,14 @@ namespace OrderProcessor.Tests
             mockOrderDbSet.MockTables();
 
             var mappingConfig = new MappingConfig();
-            
+
             orderHandler = new OrderHandler(mappingConfig.Mapper, mockOrderDbSet.Object);
+            mappingTestConfig = new MappingTestConfig();
         }
-        
-        private async Task<IEnumerable<object>> GetEvents()
+
+        private async Task<IEnumerable<EventModel>> GetEvents()
         {
-            return await eventContext.ReadStreamEventsForward(StreamName);
+            return await eventContext.ReadStreamEventsForwardAsync(StreamName);
         }
 
         [TestMethod]
@@ -55,11 +53,22 @@ namespace OrderProcessor.Tests
         public async Task HandleMessagesFromStoreAsync()
         {
             var events = await GetEvents();
+
+            var handler = Test.Handler(orderHandler);
             
             foreach (var @event in events)
             {
+                try
+                {
+                    var data = mappingTestConfig.Mapper.Map(@event, @event.GetType(), @event.Data.GetType());
 
-                Test.Handler(orderHandler).OnMessage(@event);
+                    handler.OnMessage(data);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw e;
+                }
             }
         }
     }

@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using Moq;
+using OrderProcessor.Models;
 
 namespace OrderProcessor.Tests
 {
@@ -18,7 +19,7 @@ namespace OrderProcessor.Tests
 
         public static void MockTables<T>(this MockedDbContext<T> mockedContext) where T : DbContext
         {
-            Type contextType = typeof(T);
+            var contextType = typeof(T);
 
             var dbSetProperties = contextType.GetProperties().Where(prop =>
                 prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(DbSet<>));
@@ -26,7 +27,7 @@ namespace OrderProcessor.Tests
             foreach (var prop in dbSetProperties)
             {
                 var dbSetGenericType = prop.PropertyType.GetGenericArguments()[0];
-                Type listType = typeof(List<>).MakeGenericType(dbSetGenericType);
+                var listType = typeof(List<>).MakeGenericType(dbSetGenericType);
 
                 var listForFakeTable = Activator.CreateInstance(listType);
                 var parameter = Expression.Parameter(contextType);
@@ -34,7 +35,7 @@ namespace OrderProcessor.Tests
                 var lambdaExpression = Expression.Lambda<Func<T, object>>(body, parameter);
                 var method = typeof(EntityFrameworkMockHelper).GetMethod("MockDbSet")
                     ?.MakeGenericMethod(dbSetGenericType);
-
+                
                 mockedContext.Setup(lambdaExpression).Returns(method.Invoke(null, new[] {listForFakeTable}));
                 mockedContext.Tables.Add(prop.Name, listForFakeTable);
             }
@@ -60,6 +61,8 @@ namespace OrderProcessor.Tests
                     table.Remove(t);
                 }
             });
+
+            dbSet.Setup(set => set.Attach(It.IsAny<T>()));
 
             return dbSet.Object;
         }
