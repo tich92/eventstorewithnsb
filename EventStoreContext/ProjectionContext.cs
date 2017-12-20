@@ -8,6 +8,7 @@ using EventStore.Common.Options;
 using EventStore.Core;
 using EventStoreContext.Helpers;
 using EventStoreContext.Models;
+using EventStoreContext.Projections;
 using Newtonsoft.Json;
 
 namespace EventStoreContext
@@ -88,6 +89,11 @@ namespace EventStoreContext
             var result = await projectionManager.GetStateAsync("ListOfOrderStreams", CredentialsHelper.Default);
 
             return JsonConvert.DeserializeObject<ProjectionResult>(result);
+        }
+
+        public async Task UpdateProjectionAsync(string name, string query)
+        {
+            await projectionManager.UpdateQueryAsync(name, query, CredentialsHelper.Default);
         }
     }
 }

@@ -57,6 +57,9 @@
     <Compile Include="Helpers\ParsingHelper.cs" />
     <Compile Include="Models\ProjectionResult.cs" />
     <Compile Include="ProjectionContext.cs" />
+    <Compile Include="Projections\CustomProjectionProvider.cs" />
+    <Compile Include="Projections\ProjectionItem.cs" />
+    <Compile Include="Projections\ProjectionList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\SaveResult.cs" />
   </ItemGroup>
