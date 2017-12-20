@@ -1,15 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using EventStore.ClientAPI;
-using EventStore.ClientAPI.Embedded;
-using EventStore.ClientAPI.Projections;
-using EventStore.ClientAPI.SystemData;
-using EventStore.Common.Options;
-using EventStore.Core;
+﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using EventStore.ClientAPI.Common.Log;
 using Newtonsoft.Json;
 
 namespace EventStoreContext.Tests
@@ -60,44 +50,44 @@ namespace EventStoreContext.Tests
             Assert.AreEqual(query, projectionQuery);
         }
         
-        [TestMethod]
-        public async Task UpdateProjectionTest()
-        {
-            var projectionManager = new ProjectionContext();
+        //[TestMethod]
+        //public async Task UpdateProjectionTest()
+        //{
+        //    var projectionManager = new ProjectionContext();
 
-            var name = "Order c0c8b62c-607e-4298-824c-1a73f7361f75";
+        //    var name = "Order c0c8b62c-607e-4298-824c-1a73f7361f75";
 
-            var newQuery = @"fromStream('Order c0c8b62c-607e-4298-824c-1a73f7361f75')
-                            .when({
-                                $init:function(){
-                                    return {
-                                        events: []
-                                    };
-                                },
-                                $any: function(state, event){
+        //    //var newQuery = @"fromStream('Order c0c8b62c-607e-4298-824c-1a73f7361f75')
+        //    //                .when({
+        //    //                    $init:function(){
+        //    //                        return {
+        //    //                            events: []
+        //    //                        };
+        //    //                    },
+        //    //                    $any: function(state, event){
                                     
-                                    var metadata = JSON.parse(event.metadataRaw);
-                                    var timeStamp = metadata.TimeStamp;
+        //    //                        var metadata = JSON.parse(event.metadataRaw);
+        //    //                        var timeStamp = metadata.TimeStamp;
                                     
-                                    if(timeStamp && Date.parse(timeStamp) >= Date.parse('2017-12-15 18:20:36')){
-                                        var data = {
-                                            eventType : event.eventType,
-                                            eventData : event.body,
-                                            timeStamp : timeStamp
-                                        };
+        //    //                        if(timeStamp && Date.parse(timeStamp) >= Date.parse('2017-12-15 18:20:36')){
+        //    //                            var data = {
+        //    //                                eventType : event.eventType,
+        //    //                                eventData : event.body,
+        //    //                                timeStamp : timeStamp
+        //    //                            };
             
-                                        state.events.push(data);
-                                    }
-                                }
-                            });";
+        //    //                            state.events.push(data);
+        //    //                        }
+        //    //                    }
+        //    //                });";
 
-            var currentProjection = await projectionManager.GetQueryAsync(name);
+        //    //var currentProjection = await projectionManager.GetQueryAsync(name);
 
-            //if (newQuery != currentProjection)
-            //{
-            //    await projectionManager.UpdateQueryAsync(name, newQuery, credentials);
-            //}
-        }
+        //    //if (newQuery != currentProjection)
+        //    //{
+        //    //    await projectionManager.UpdateQueryAsync(name, newQuery, credentials);
+        //    //}
+        //}
 
         [TestMethod]
         public async Task GetByQueryTest()

@@ -40,6 +40,25 @@ namespace OrderProcessor
             return await eventContext.GetSrteamListAsync();
         }
 
+        /// <summary>
+        /// This variant of performing events more abstract and fast, but require - one RabbitMQ instance per service instance
+        /// </summary>
+        /// <param name="streamName"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        [Obsolete("This approach is not correct, because all incoming events perform async")]
+        public async Task PerformEventsByStreamAsync(string streamName, IMessageHandlerContext context)
+        {
+            var events = await eventContext.ReadStreamEventsForwardAsync(streamName);
+
+            foreach (var @event in events)
+            {
+                var data = mapper.Map(@event, @event.Data, @event.GetType(), @event.Data.GetType());
+
+                await context.Publish(data);
+            }
+        }
+
         public async Task PerformEventsByStreamAsync(string streamName)
         {
             var events = await eventContext.ReadStreamEventsForwardAsync(streamName);
@@ -48,12 +67,14 @@ namespace OrderProcessor
             {
                 var data = mapper.Map(@event, @event.Data, @event.GetType(), @event.Data.GetType());
 
-                var handleEventMethod = orderHandler.GetType().GetMethod(nameof(OrderHandler.Handle), new [] {data.GetType(), messageHandlerContext.GetType() });
+                var handleEventMethod = orderHandler.GetType().GetMethod("Handle", new [] {data.GetType(), messageHandlerContext.GetType() });
 
                 if (handleEventMethod == null)
                     throw new Exception("Handle method cannot be found");
 
-                handleEventMethod.Invoke(orderHandler, new [] {data, messageHandlerContext});
+                dynamic task = handleEventMethod.Invoke(orderHandler, new [] {data, messageHandlerContext});
+
+                await task;
             }
         }
     }

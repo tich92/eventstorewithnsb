@@ -28,6 +28,8 @@ namespace OrderProcessor.Handlers
         private readonly EventContext eventContext;
         private readonly ProjectionContext projectionContext;
 
+        private static object _lockObject = new object();
+
         public OrderHandler(IMapper mapper, OrderContext orderContext, EventContext eventContext, ProjectionContext projectionContext)
         {
             this.mapper = mapper;
@@ -38,14 +40,27 @@ namespace OrderProcessor.Handlers
 
         public async Task Handle(CreatedOrderEvent message, IMessageHandlerContext context)
         {
-            _log.Info($"Handle {nameof(message)}");
+            try
+            {
+                _log.Info($"Handle {nameof(message)}");
 
-            var model = mapper.Map<Order>(message);
+                var model = mapper.Map<Order>(message);
 
-            orderContext.Orders.Add(model);
-            await orderContext.SaveChangesAsync();
+                var existOrder = await orderContext.Orders.FirstOrDefaultAsync(o => o.Id == model.Id);
 
-            _log.Info($"Perform {nameof(message)} successful");
+                if(existOrder != null)
+                    return;
+
+                orderContext.Orders.Add(model);
+                await orderContext.SaveChangesAsync();
+
+                _log.Info($"Perform {nameof(message)} successful");
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+                throw e;
+            }
         }
 
         public async Task Handle(CreatedOrderItemEvent message, IMessageHandlerContext context)
@@ -108,14 +123,17 @@ namespace OrderProcessor.Handlers
 
         public async Task Handle(RestoreOrdersCommand message, IMessageHandlerContext context)
         {
-            var restoreProcessor = new ExecuteEventProcessor(orderContext, eventContext, mapper, this, context);
-
-            await restoreProcessor.DropDataAsync();
-            var streams = await projectionContext.GetResultOfStreamListAsync();
-
-            foreach (var stream in streams.Items)
+            lock (_lockObject)
             {
-                await restoreProcessor.PerformEventsByStreamAsync(stream);
+                var restoreProcessor = new ExecuteEventProcessor(orderContext, eventContext, mapper, this, context);
+
+                restoreProcessor.DropDataAsync().GetAwaiter().GetResult();
+                var streams = projectionContext.GetResultOfStreamListAsync().GetAwaiter().GetResult();
+
+                foreach (var stream in streams.Items)
+                {
+                    restoreProcessor.PerformEventsByStreamAsync(stream).GetAwaiter().GetResult();
+                }
             }
         }
     }
