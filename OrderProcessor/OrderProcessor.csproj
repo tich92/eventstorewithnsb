@@ -89,7 +89,12 @@
     <Compile Include="Migrations\201712190902188_AddEventStoreMetaData.Designer.cs">
       <DependentUpon>201712190902188_AddEventStoreMetaData.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201712201044400_AddCustomerEntity.cs" />
+    <Compile Include="Migrations\201712201044400_AddCustomerEntity.Designer.cs">
+      <DependentUpon>201712201044400_AddCustomerEntity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\Entity.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderItem.cs" />
@@ -120,6 +125,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201712190902188_AddEventStoreMetaData.resx">
       <DependentUpon>201712190902188_AddEventStoreMetaData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712201044400_AddCustomerEntity.resx">
+      <DependentUpon>201712201044400_AddCustomerEntity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
