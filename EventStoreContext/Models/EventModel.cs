@@ -3,12 +3,14 @@
     public class EventModel
     {
         public object Data { get; set; }
-        public long EventNumber { get; set; }
+        public long NextExpectedVersion { get; set; }
+        public long LogPosition { get; set; }
 
-        public EventModel(object data, long eventNumber)
+        public EventModel(object data, long eventNumber, long logPosition)
         {
             Data = data;
-            EventNumber = eventNumber;
+            NextExpectedVersion = eventNumber;
+            LogPosition = logPosition;
         }
     }
 }

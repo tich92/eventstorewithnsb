@@ -5,7 +5,6 @@ using AutoMapper;
 using EventStoreContext;
 using NServiceBus;
 using OrderProcessor.Data;
-using OrderProcessor.Handlers;
 
 namespace OrderProcessor
 {
@@ -13,24 +12,20 @@ namespace OrderProcessor
     {
         private readonly OrderContext orderContext;
         private readonly EventContext eventContext;
-        private readonly OrderHandler orderHandler;
-        private readonly IMessageHandlerContext messageHandlerContext;
         private readonly IMapper mapper;
 
-        public delegate object GenericInvoker(object target, params object[] arguments);
-
-        public ExecuteEventProcessor(OrderContext orderContext, EventContext eventContext, IMapper mapper,
-            OrderHandler orderHandler, IMessageHandlerContext messageHandlerContext)
+        public IMessageHandlerContext MessageHandlerContext { get; set; }
+        
+        public ExecuteEventProcessor(OrderContext orderContext, EventContext eventContext, IMapper mapper)
         {
             this.orderContext = orderContext;
             this.eventContext = eventContext;
             this.mapper = mapper;
-            this.orderHandler = orderHandler;
-            this.messageHandlerContext = messageHandlerContext;
         }
 
         public async Task DropDataAsync()
         {
+            await orderContext.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Customers]");
             await orderContext.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Orders]");
             await orderContext.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[OrderItems]");
         }
@@ -59,20 +54,23 @@ namespace OrderProcessor
             }
         }
 
-        public async Task PerformEventsByStreamAsync(string streamName)
+        public async Task PerformEventsByStreamAsync<THandler>(string streamName, THandler handlerInstance)
         {
             var events = await eventContext.ReadStreamEventsForwardAsync(streamName);
             
             foreach (var @event in events)
             {
                 var data = mapper.Map(@event, @event.Data, @event.GetType(), @event.Data.GetType());
+                
+                if(MessageHandlerContext == null)
+                    throw new ArgumentNullException(nameof(MessageHandlerContext));
 
-                var handleEventMethod = orderHandler.GetType().GetMethod("Handle", new [] {data.GetType(), messageHandlerContext.GetType() });
+                var handleEventMethod = typeof(THandler).GetMethod("Handle", new[] { data.GetType(), MessageHandlerContext.GetType() });
 
                 if (handleEventMethod == null)
                     throw new Exception("Handle method cannot be found");
-
-                dynamic task = handleEventMethod.Invoke(orderHandler, new [] {data, messageHandlerContext});
+                
+                dynamic task = handleEventMethod.Invoke(handlerInstance, new [] {data, MessageHandlerContext });
 
                 await task;
             }

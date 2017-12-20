@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Contracts.Events;
-using EventStoreContext;
 using EventStoreContext.Models;
 using OrderProcessor.Models;
 
@@ -26,13 +25,16 @@ namespace OrderProcessor
                     .ForMember(dest => dest.LogPosition, opt => opt.MapFrom(src => src.LogPosition));
 
                 cfg.CreateMap<EventModel, CreatedOrderEvent>()
-                    .ForMember(dest => dest.CustomerId, opt => opt.MapFrom(src => ((CreatedOrderEvent)src.Data).CustomerId))
-                    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => ((CreatedOrderEvent)src.Data).Id))
-                    .ForMember(dest => dest.ItemsCount, opt => opt.MapFrom(src => ((CreatedOrderEvent)src.Data).ItemsCount))
-                    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => ((CreatedOrderEvent)src.Data).Status))
-                    .ForMember(dest => dest.Total, opt => opt.MapFrom(src => ((CreatedOrderEvent)src.Data).Total))
-                    .ForMember(dest => dest.Vat, opt => opt.MapFrom(src => ((CreatedOrderEvent)src.Data).Vat))
-                    .ForMember(dest => dest.NextExpectedVersion, opt => opt.MapFrom(src => src.EventNumber));
+                    .ForMember(dest => dest.CustomerId,
+                        opt => opt.MapFrom(src => ((CreatedOrderEvent) src.Data).CustomerId))
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => ((CreatedOrderEvent) src.Data).Id))
+                    .ForMember(dest => dest.ItemsCount,
+                        opt => opt.MapFrom(src => ((CreatedOrderEvent) src.Data).ItemsCount))
+                    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => ((CreatedOrderEvent) src.Data).Status))
+                    .ForMember(dest => dest.Total, opt => opt.MapFrom(src => ((CreatedOrderEvent) src.Data).Total))
+                    .ForMember(dest => dest.Vat, opt => opt.MapFrom(src => ((CreatedOrderEvent) src.Data).Vat))
+                    .ForMember(dest => dest.NextExpectedVersion, opt => opt.MapFrom(src => src.NextExpectedVersion))
+                    .ForMember(dest => dest.LogPosition, opt => opt.MapFrom(src => src.LogPosition));
 
                 cfg.CreateMap<EventModel, CreatedOrderItemEvent>()
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(src => ((CreatedOrderItemEvent)src.Data).Id))
@@ -41,15 +43,32 @@ namespace OrderProcessor
                     .ForMember(dest => dest.Price, opt => opt.MapFrom(src => ((CreatedOrderItemEvent)src.Data).Price))
                     .ForMember(dest => dest.Quantity,
                         opt => opt.MapFrom(src => ((CreatedOrderItemEvent)src.Data).Quantity))
-                    .ForMember(dest => dest.NextExpectedVersion, opt => opt.MapFrom(src => src.EventNumber));
+                    .ForMember(dest => dest.NextExpectedVersion, opt => opt.MapFrom(src => src.NextExpectedVersion))
+                    .ForMember(dest => dest.LogPosition, opt => opt.MapFrom(src => src.LogPosition));
 
                 cfg.CreateMap<EventModel, PlacedOrderEvent>()
                     .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => ((PlacedOrderEvent)src.Data).OrderId))
-                    .ForMember(dest => dest.NextExpectedVersion, opt => opt.MapFrom(src => src.EventNumber));
+                    .ForMember(dest => dest.NextExpectedVersion, opt => opt.MapFrom(src => src.NextExpectedVersion))
+                    .ForMember(dest => dest.LogPosition, opt => opt.MapFrom(src => src.LogPosition));
 
                 cfg.CreateMap<EventModel, CancelOrderEvent>()
                     .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => ((CancelOrderEvent)src.Data).OrderId))
-                    .ForMember(dest => dest.NextExpectedVersion, opt => opt.MapFrom(src => src.EventNumber));
+                    .ForMember(dest => dest.NextExpectedVersion, opt => opt.MapFrom(src => src.NextExpectedVersion))
+                    .ForMember(dest => dest.LogPosition, opt => opt.MapFrom(src => src.LogPosition));
+
+                cfg.CreateMap<CreateCustomerEvent, Customer>()
+                    .ForMember(dest => dest.Orders, opt => opt.Ignore());
+
+                cfg.CreateMap<EventModel, CreateCustomerEvent>()
+                    .ForMember(dest => dest.CreatedDate,
+                        opt => opt.MapFrom(src => ((CreateCustomerEvent) src.Data).CreatedDate))
+                    .ForMember(dest => dest.Email, opt => opt.MapFrom(src => ((CreateCustomerEvent) src.Data).Email))
+                    .ForMember(dest => dest.FullName,
+                        opt => opt.MapFrom(src => ((CreateCustomerEvent) src.Data).FullName))
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => ((CreateCustomerEvent) src.Data).Id))
+                    .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => ((CreateCustomerEvent) src.Data).Phone))
+                    .ForMember(dest => dest.NextExpectedVersion, opt => opt.MapFrom(src => src.NextExpectedVersion))
+                    .ForMember(dest => dest.LogPosition, opt => opt.MapFrom(src => src.LogPosition));
             });
 
             Mapper = mappingConfig.CreateMapper();

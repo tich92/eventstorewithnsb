@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using EventStoreContext;
 
 namespace Client
 {
@@ -9,8 +10,11 @@ namespace Client
         {
             var endpointInstance = ClientInstance.Initialize().GetAwaiter().GetResult();
             var persistence = new OrderPersistence();
-            
+
+            var projectionContext = new ProjectionContext();
+
             var orderProducer = new OrderProducer(endpointInstance, persistence);
+            
 
             Console.WriteLine("Client initialized . . .");
             while (true)

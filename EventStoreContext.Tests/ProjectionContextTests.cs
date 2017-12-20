@@ -106,7 +106,7 @@ namespace EventStoreContext.Tests
         {
             var projectionContext = new ProjectionContext();
 
-            var data = await projectionContext.GetResultOfStreamListAsync();
+            var data = await projectionContext.GetListOfOrderStreamsAsync();
 
             Assert.IsNotNull(data);
         }

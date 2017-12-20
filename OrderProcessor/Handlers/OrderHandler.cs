@@ -46,7 +46,7 @@ namespace OrderProcessor.Handlers
 
                 var model = mapper.Map<Order>(message);
 
-                var existOrder = await orderContext.Orders.FirstOrDefaultAsync(o => o.Id == model.Id);
+                var existOrder = orderContext.Orders.FirstOrDefault(o => o.Id == model.Id);
 
                 if(existOrder != null)
                     return;
@@ -59,7 +59,7 @@ namespace OrderProcessor.Handlers
             catch (Exception e)
             {
                 _log.Error(e.Message, e);
-                throw e;
+                throw;
             }
         }
 
@@ -121,19 +121,24 @@ namespace OrderProcessor.Handlers
             _log.Info($"Perform {nameof(message)} successful");
         }
 
-        public async Task Handle(RestoreOrdersCommand message, IMessageHandlerContext context)
+        public Task Handle(RestoreOrdersCommand message, IMessageHandlerContext context)
         {
             lock (_lockObject)
             {
-                var restoreProcessor = new ExecuteEventProcessor(orderContext, eventContext, mapper, this, context);
+                var restoreProcessor = new ExecuteEventProcessor(orderContext, eventContext, mapper);
+
+                restoreProcessor.MessageHandlerContext = context;
 
                 restoreProcessor.DropDataAsync().GetAwaiter().GetResult();
-                var streams = projectionContext.GetResultOfStreamListAsync().GetAwaiter().GetResult();
+
+                var streams = projectionContext.GetListOfOrderStreamsAsync().GetAwaiter().GetResult();
 
                 foreach (var stream in streams.Items)
                 {
-                    restoreProcessor.PerformEventsByStreamAsync(stream).GetAwaiter().GetResult();
+                    restoreProcessor.PerformEventsByStreamAsync(stream, this).GetAwaiter().GetResult();
                 }
+
+                return Task.CompletedTask;
             }
         }
     }

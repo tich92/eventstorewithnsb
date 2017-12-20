@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace OrderProcessor.Models
+namespace Contracts.Events
 {
-    public class Customer : Entity
+    public class CreateCustomerEvent : ClientEvent
     {
         public Guid Id { get; set; }
 
@@ -12,7 +11,5 @@ namespace OrderProcessor.Models
 
         public string Phone { get; set; }
         public DateTime CreatedDate { get; set; }
-
-        public virtual ICollection<Order> Orders { get; set; }
     }
 }

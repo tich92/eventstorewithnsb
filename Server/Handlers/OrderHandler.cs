@@ -5,7 +5,7 @@ using Contracts.Events;
 using EventStoreContext;
 using NServiceBus;
 
-namespace Server
+namespace Server.Handlers
 {
     public class OrderHandler : IHandleMessages<CreateOrderCommand>,
         IHandleMessages<AddOrderItemCommand>,

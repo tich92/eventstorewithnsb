@@ -56,8 +56,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomerProducer.cs" />
+    <Compile Include="Handlers\CustomerHandler.cs" />
     <Compile Include="Mapping.cs" />
-    <Compile Include="OrderHandler.cs" />
+    <Compile Include="Handlers\OrderHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerInstance.cs" />

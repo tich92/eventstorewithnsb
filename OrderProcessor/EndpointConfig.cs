@@ -28,6 +28,8 @@ namespace OrderProcessor
                 reg.ConfigureComponent(() => new EventContext(), DependencyLifecycle.SingleInstance);
                 reg.ConfigureComponent(() => new ProjectionContext(), DependencyLifecycle.SingleInstance);
 
+                reg.ConfigureComponent<ExecuteEventProcessor>(DependencyLifecycle.SingleInstance);
+
             });
 
             endpointConfiguration.UseSerialization<JsonSerializer>();

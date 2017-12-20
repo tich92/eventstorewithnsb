@@ -8,7 +8,6 @@ using NServiceBus.Testing;
 using OrderProcessor.Data;
 using EventStoreContext;
 using EventStoreContext.Models;
-using NServiceBus;
 using OrderProcessor.Handlers;
 
 namespace OrderProcessor.Tests
@@ -32,13 +31,15 @@ namespace OrderProcessor.Tests
 
             var mockOrderContext = new MockedDbContext<OrderContext>();
 
+            var projectionContext = new ProjectionContext();
+
             mockOrderContext.MockTables();
 
             orderContext = mockOrderContext.Object;
 
             var mappingConfig = new MappingConfig();
 
-            orderHandler = new OrderHandler(mappingConfig.Mapper, mockOrderContext.Object, eventContext);
+            orderHandler = new OrderHandler(mappingConfig.Mapper, mockOrderContext.Object, eventContext, projectionContext);
             mappingTestConfig = new MappingTestConfig();
         }
 
@@ -76,7 +77,7 @@ namespace OrderProcessor.Tests
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    throw e;
+                    throw;
                 }
             }
         }
@@ -92,13 +93,14 @@ namespace OrderProcessor.Tests
             Assert.IsNotNull(streams);
             Assert.IsTrue(streams.Any());
 
-            var eventProcessor = new ExecuteEventProcessor(orderContext,eventContext, mappingTestConfig.Mapper, orderHandler, new TestableMessageHandlerContext());
+            var eventProcessor = new ExecuteEventProcessor(orderContext,eventContext, mappingTestConfig.Mapper);
+            eventProcessor.MessageHandlerContext = new TestableMessageHandlerContext();
 
             foreach (var streamName in streams)
             {
                 try
                 {
-                    await eventProcessor.PerformEventsByStreamAsync(streamName);
+                    await eventProcessor.PerformEventsByStreamAsync(streamName, orderHandler);
                 }
                 catch (Exception e)
                 {

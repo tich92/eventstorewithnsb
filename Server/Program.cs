@@ -1,5 +1,6 @@
 ﻿using System;
 using Contracts.Commands;
+using EventStoreContext;
 using NServiceBus;
 
 namespace Server
@@ -14,6 +15,10 @@ namespace Server
 
             Console.WriteLine("Start workinkg server . . . ");
             Console.WriteLine("Waiting messages . . . ");
+
+            var projectionContext = new ProjectionContext();
+
+            var customerProducer = new CustomerProducer(projectionContext, instance);
 
             while (true)
             {
@@ -38,7 +43,11 @@ namespace Server
                 }
                 else if (line == "order-processor-restore")
                 {
-                    instance.Send(new RestoreOrdersCommand()).GetAwaiter().GetResult();
+                    instance.Send(new RestoreOrderProcessorCommand()).GetAwaiter().GetResult();
+                }
+                else if (line == "propagate-customers")
+                {
+                    customerProducer.PropagateCustomersFromStoreAsync().GetAwaiter().GetResult();
                 }
             }
 

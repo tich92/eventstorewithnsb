@@ -23,6 +23,9 @@ namespace Server
 
                 cfg.CreateMap<CancelOrderEvent, CancelOrderCommand>()
                     .ForMember(dest => dest.NextExpectedVersion, opt => opt.MapFrom(src => src.NextExpectedVersion));
+
+                cfg.CreateMap<CreateCustomerEvent, CreateCustomerCommand>()
+                    .ForMember(dest => dest.NextExpectedVersion, opt => opt.MapFrom(src => src.NextExpectedVersion));
             });
 
             Mapper = config.CreateMapper();

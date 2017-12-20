@@ -76,6 +76,8 @@
     <Compile Include="Data\OrderContext.cs" />
     <Compile Include="EndpointConfig.cs" />
     <Compile Include="ExecuteEventProcessor.cs" />
+    <Compile Include="Handlers\CustomerHandler.cs" />
+    <Compile Include="Handlers\RestoreCommandHandler.cs" />
     <Compile Include="MappingConfig.cs" />
     <Compile Include="Migrations\201712131104404_InitOrderContext.cs" />
     <Compile Include="Migrations\201712131104404_InitOrderContext.Designer.cs">

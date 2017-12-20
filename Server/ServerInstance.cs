@@ -16,7 +16,7 @@ namespace Server
             var routing = transport.Routing();
 
             routing.RouteToEndpoint(typeof(CheckOutOrderCommand).Assembly, "OrderProcessor");
-            routing.RouteToEndpoint(typeof(RestoreOrdersCommand).Assembly, "OrderProcessor");
+            routing.RouteToEndpoint(typeof(RestoreOrderProcessorCommand).Assembly, "OrderProcessor");
             
             endpointConfiguration.UsePersistence<InMemoryPersistence>();
 

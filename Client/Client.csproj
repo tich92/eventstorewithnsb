@@ -70,6 +70,10 @@
       <Project>{9D0D17CF-3B68-46E3-8496-B642ABC3CCC3}</Project>
       <Name>Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EventStoreContext\EventStoreContext.csproj">
+      <Project>{7EB4662A-BE0E-4AFC-B405-5A13C47B6AE9}</Project>
+      <Name>EventStoreContext</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

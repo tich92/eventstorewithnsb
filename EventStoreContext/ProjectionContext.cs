@@ -38,14 +38,6 @@ namespace EventStoreContext
             projectionManager = new ProjectionsManager(new ConsoleLogger(), http, new TimeSpan(1, 0, 0));
         }
 
-        public async Task<StreamList> GetResultOfStreamListAsync()
-        {
-            var result = await projectionManager.GetStateAsync("ListOrStreams", CredentialsHelper.Default);
-
-            return JsonConvert.DeserializeObject<StreamList>(result);
-        }
-
-
         public async Task CreateContinuousAsync(string name, string projectionQuery)
         {
             await projectionManager.CreateContinuousAsync(name, projectionQuery, CredentialsHelper.Default);
@@ -75,6 +67,27 @@ namespace EventStoreContext
         public async Task<string> GetQueryAsync(string name)
         {
             return await projectionManager.GetQueryAsync(name, CredentialsHelper.Default);
+        }
+
+        public async Task<ProjectionResult> GetListOfCustomerIdAsync()
+        {
+            var result = await projectionManager.GetStateAsync("ListOfCustomerId", CredentialsHelper.Default);
+
+            return JsonConvert.DeserializeObject<ProjectionResult>(result);
+        }
+
+        public async Task<ProjectionResult> GetListOfCustomerStreamsAsync()
+        {
+            var result = await projectionManager.GetStateAsync("ListOfCustomerStreams", CredentialsHelper.Default);
+
+            return JsonConvert.DeserializeObject<ProjectionResult>(result);
+        }
+
+        public async Task<ProjectionResult> GetListOfOrderStreamsAsync()
+        {
+            var result = await projectionManager.GetStateAsync("ListOfOrderStreams", CredentialsHelper.Default);
+
+            return JsonConvert.DeserializeObject<ProjectionResult>(result);
         }
     }
 }

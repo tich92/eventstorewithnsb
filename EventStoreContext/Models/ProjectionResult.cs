@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace EventStoreContext.Models
 {
-    public class StreamList
+    public class ProjectionResult
     {
         [JsonProperty("count")]
         public long Count { get; set; }
