@@ -18,8 +18,7 @@ namespace OrderProcessor.Handlers
     public class OrderHandler : IHandleMessages<CreatedOrderEvent>,
         IHandleMessages<CreatedOrderItemEvent>,
         IHandleMessages<PlacedOrderEvent>,
-        IHandleMessages<CancelOrderEvent>,
-        IHandleMessages<RestoreOrdersCommand>
+        IHandleMessages<CancelOrderEvent>
     {
         private static ILog _log = LogManager.GetLogger<OrderHandler>();
 
@@ -119,27 +118,6 @@ namespace OrderProcessor.Handlers
             await orderContext.SaveChangesAsync();
 
             _log.Info($"Perform {nameof(message)} successful");
-        }
-
-        public Task Handle(RestoreOrdersCommand message, IMessageHandlerContext context)
-        {
-            lock (_lockObject)
-            {
-                var restoreProcessor = new ExecuteEventProcessor(orderContext, eventContext, mapper);
-
-                restoreProcessor.MessageHandlerContext = context;
-
-                restoreProcessor.DropDataAsync().GetAwaiter().GetResult();
-
-                var streams = projectionContext.GetListOfOrderStreamsAsync().GetAwaiter().GetResult();
-
-                foreach (var stream in streams.Items)
-                {
-                    restoreProcessor.PerformEventsByStreamAsync(stream, this).GetAwaiter().GetResult();
-                }
-
-                return Task.CompletedTask;
-            }
         }
     }
 }
