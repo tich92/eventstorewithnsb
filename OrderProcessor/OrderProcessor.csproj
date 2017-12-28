@@ -45,6 +45,7 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="EventStore.ClientAPI, Version=4.0.3.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -95,6 +96,10 @@
     <Compile Include="Migrations\201712201044400_AddCustomerEntity.Designer.cs">
       <DependentUpon>201712201044400_AddCustomerEntity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201712261021566_UpdateContext.cs" />
+    <Compile Include="Migrations\201712261021566_UpdateContext.Designer.cs">
+      <DependentUpon>201712261021566_UpdateContext.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\Entity.cs" />
@@ -130,6 +135,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201712201044400_AddCustomerEntity.resx">
       <DependentUpon>201712201044400_AddCustomerEntity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712261021566_UpdateContext.resx">
+      <DependentUpon>201712261021566_UpdateContext.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
