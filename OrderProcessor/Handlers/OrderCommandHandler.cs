@@ -15,11 +15,11 @@ namespace OrderProcessor.Handlers
     public class OrderCommandHandler : IHandleMessages<CalculateOrderCommand>,
         IHandleMessages<CheckOutOrderCommand>
     {
-        private readonly EventContext eventContext;
+        private readonly EventProvider eventContext;
         private readonly IMapper mapper;
         private readonly OrderContext orderContext;
 
-        public OrderCommandHandler(IMapper mapper, OrderContext orderContext, EventContext eventContext)
+        public OrderCommandHandler(IMapper mapper, OrderContext orderContext, EventProvider eventContext)
         {
             this.eventContext = eventContext;
             this.mapper = mapper;

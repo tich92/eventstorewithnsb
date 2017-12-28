@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Contracts.Events;
 using NServiceBus;
+using NServiceBus.Logging;
 using OrderProcessor.Data;
 using OrderProcessor.Models;
 
@@ -11,6 +12,8 @@ namespace OrderProcessor.Handlers
 {
     public class CustomerHandler : IHandleMessages<CreateCustomerEvent>
     {
+        private ILog log = LogManager.GetLogger<CustomerHandler>();
+
         private readonly OrderContext orderContext;
         private readonly IMapper mapper;
 
@@ -22,6 +25,8 @@ namespace OrderProcessor.Handlers
 
         public async Task Handle(CreateCustomerEvent message, IMessageHandlerContext context)
         {
+            log.Debug($"Handled new customer with Id {message.Id}");
+
             var customer = mapper.Map<Customer>(message);
 
             if(IsExist(message.Id))
@@ -30,6 +35,8 @@ namespace OrderProcessor.Handlers
             orderContext.Customers.Add(customer);
 
             await orderContext.SaveChangesAsync();
+
+            log.Debug($"Handling new customer with Id {message.Id} successful performed");
         }
 
         private bool IsExist(Guid id)

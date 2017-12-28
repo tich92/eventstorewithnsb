@@ -23,12 +23,12 @@ namespace OrderProcessor.Handlers
 
         private readonly IMapper mapper;
         private readonly OrderContext orderContext;
-        private readonly EventContext eventContext;
-        private readonly ProjectionContext projectionContext;
+        private readonly EventProvider eventContext;
+        private readonly ProjectionProvider projectionContext;
 
         private static object _lockObject = new object();
 
-        public OrderHandler(IMapper mapper, OrderContext orderContext, EventContext eventContext, ProjectionContext projectionContext)
+        public OrderHandler(IMapper mapper, OrderContext orderContext, EventProvider eventContext, ProjectionProvider projectionContext)
         {
             this.mapper = mapper;
             this.orderContext = orderContext;
@@ -40,7 +40,7 @@ namespace OrderProcessor.Handlers
         {
             try
             {
-                _log.Info($"Handle {nameof(message)}");
+                _log.Info($"Handled new order with Id {message.Id}");
 
                 var model = mapper.Map<Order>(message);
 
@@ -52,7 +52,7 @@ namespace OrderProcessor.Handlers
                 orderContext.Orders.Add(model);
                 await orderContext.SaveChangesAsync();
 
-                _log.Info($"Perform {nameof(message)} successful");
+                _log.Info($"Handling new order with Id {message.Id} successful performed");
             }
             catch (Exception e)
             {
@@ -63,7 +63,7 @@ namespace OrderProcessor.Handlers
 
         public async Task Handle(CreatedOrderItemEvent message, IMessageHandlerContext context)
         {
-            _log.Info($"Handle {nameof(message)}");
+            _log.Info($"Handled new order item with Id {message.Id}");
 
             var model = mapper.Map<OrderItem>(message);
 
@@ -78,12 +78,12 @@ namespace OrderProcessor.Handlers
 
             await context.SendLocal(new CalculateOrderCommand(message.OrderId));
 
-            _log.Info($"Perform {nameof(message)} successful");
+            _log.Info($"Handling new order item with Id {message.Id} successful performed");
         }
 
         public async Task Handle(PlacedOrderEvent message, IMessageHandlerContext context)
         {
-            _log.Info($"Handle {nameof(message)}");
+            _log.Info($"Handled place order event with Id {message.OrderId}");
 
             var order = orderContext.Orders.FirstOrDefault(o => o.Id == message.OrderId);
 
@@ -93,16 +93,16 @@ namespace OrderProcessor.Handlers
             order.Place();
 
             orderContext.Orders.Attach(order);
-            orderContext.Entry(order).State = EntityState.Modified;
+            //orderContext.Entry(order).State = EntityState.Modified;
 
             await orderContext.SaveChangesAsync();
 
-            _log.Info($"Perform {nameof(message)} successful");
+            _log.Info($"Handling place order with Id {message.OrderId} successful performed");
         }
 
         public async Task Handle(CancelOrderEvent message, IMessageHandlerContext context)
         {
-            _log.Info($"Handle {nameof(message)}");
+            _log.Info($"Handled cancel order event with Id {message.OrderId}");
 
             var order = orderContext.Orders.FirstOrDefault(o => o.Id == message.OrderId);
 
@@ -112,11 +112,11 @@ namespace OrderProcessor.Handlers
             order.Cancel();
 
             orderContext.Orders.Attach(order);
-            orderContext.Entry(order).State = EntityState.Modified;
+            //orderContext.Entry(order).State = EntityState.Modified;
 
             await orderContext.SaveChangesAsync();
 
-            _log.Info($"Perform {nameof(message)} successful");
+            _log.Info($"Handling cancel order with Id {message.OrderId} successful performed");
         }
     }
 }

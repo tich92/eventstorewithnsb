@@ -10,11 +10,13 @@ namespace OrderProcessor.Handlers
         private readonly OrderHandler orderHandler;
         private readonly CustomerHandler customerHandler;
         private readonly ExecuteEventProcessor executeEventProcessor;
-        private readonly ProjectionContext projectionContext;
-        private readonly EventContext eventContext;
+        private readonly ProjectionProvider projectionContext;
+        private readonly EventProvider eventContext;
+
+        private static object _lockObject = new object();
 
         public RestoreCommandHandler(OrderHandler orderHandler, ExecuteEventProcessor executeEventProcessor,
-            ProjectionContext projectionContext, EventContext eventContext, CustomerHandler customerHandler)
+            ProjectionProvider projectionContext, EventProvider eventContext, CustomerHandler customerHandler)
         {
             this.orderHandler = orderHandler;
             this.executeEventProcessor = executeEventProcessor;
@@ -23,14 +25,19 @@ namespace OrderProcessor.Handlers
             this.customerHandler = customerHandler;
         }
 
-        public async Task Handle(RestoreOrderProcessorCommand message, IMessageHandlerContext context)
+        public Task Handle(RestoreOrderProcessorCommand message, IMessageHandlerContext context)
         {
-            executeEventProcessor.MessageHandlerContext = context;
+            lock (_lockObject)
+            {
+                executeEventProcessor.MessageHandlerContext = context;
 
-            await executeEventProcessor.DropDataAsync();
+                executeEventProcessor.DropDataAsync().GetAwaiter().GetResult();
 
-            await RestoreCustomersAsync();
-            await RestoreOrdersAsync();
+                RestoreCustomersAsync().GetAwaiter().GetResult();
+                RestoreOrdersAsync().GetAwaiter().GetResult();
+            }
+
+            return Task.CompletedTask;
         }
 
         private async Task RestoreOrdersAsync()

@@ -5,6 +5,7 @@ namespace OrderProcessor
     using NServiceBus;
     using Data;
 
+    [EndpointSLA("00:03:00")]
     [EndpointName("OrderProcessor")]
     public class EndpointConfig : IConfigureThisEndpoint, AsA_Client
     {
@@ -21,13 +22,13 @@ namespace OrderProcessor
 
             var mapper = new MappingConfig();
 
-            var projectionContext = new ProjectionContext();
+            var projectionContext = new ProjectionProvider();
 
             endpointConfiguration.RegisterComponents(reg =>
             {
                 reg.ConfigureComponent(() => new OrderContext("OrderContext"), DependencyLifecycle.InstancePerCall);
                 reg.ConfigureComponent(() => mapper.Mapper, DependencyLifecycle.SingleInstance);
-                reg.ConfigureComponent(() => new EventContext(), DependencyLifecycle.SingleInstance);
+                reg.ConfigureComponent(() => new EventProvider(), DependencyLifecycle.SingleInstance);
                 reg.ConfigureComponent(() => projectionContext, DependencyLifecycle.SingleInstance);
 
                 reg.ConfigureComponent<ExecuteEventProcessor>(DependencyLifecycle.SingleInstance);
