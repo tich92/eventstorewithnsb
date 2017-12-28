@@ -12,7 +12,7 @@ namespace EventStoreContext.Tests
         [TestMethod]
         public async Task CreateProjectionTest()
         {
-            var projectionManager = new ProjectionContext();
+            var projectionManager = new ProjectionProvider();
 
             var name = "Order c0c8b62c-607e-4298-824c-1a73f7361f75";
             
@@ -94,7 +94,7 @@ namespace EventStoreContext.Tests
         {
             var projectionName = "Order c0c8b62c-607e-4298-824c-1a73f7361f75";
 
-            var projectionManager = new ProjectionContext();
+            var projectionManager = new ProjectionProvider();
 
             var state = await projectionManager.GetStateAsync(projectionName);
 
@@ -104,7 +104,7 @@ namespace EventStoreContext.Tests
         [TestMethod]
         public async Task GetAllStreamsProjectionTest()
         {
-            var projectionContext = new ProjectionContext();
+            var projectionContext = new ProjectionProvider();
 
             var data = await projectionContext.GetListOfOrderStreamsAsync();
 

@@ -11,11 +11,11 @@ namespace EventStoreContext.Tests
     [TestClass]
     public class EventStoreContextTest
     {
-        private readonly EventContext eventContext;
+        private readonly EventProvider eventContext;
         
         public EventStoreContextTest()
         {
-            eventContext = new EventContext();   
+            eventContext = new EventProvider();   
         }
 
         private IEnumerable<Assembly> GetReferencedTypes()
