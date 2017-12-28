@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using EventStoreContext;
 
 namespace Client
 {
@@ -11,10 +10,7 @@ namespace Client
             var endpointInstance = ClientInstance.Initialize().GetAwaiter().GetResult();
             var persistence = new OrderPersistence();
 
-            var projectionContext = new ProjectionContext();
-
             var orderProducer = new OrderProducer(endpointInstance, persistence);
-            
 
             Console.WriteLine("Client initialized . . .");
             while (true)
@@ -52,7 +48,7 @@ namespace Client
 
                     orderProducer.PlaceOrder(orderId).GetAwaiter().GetResult();
                 }
-                else if(line.Contains("cancel"))
+                else if (line.Contains("cancel"))
                 {
                     var commandItems = line.Split(' ');
 
@@ -61,6 +57,18 @@ namespace Client
                     var orderId = persistence.OrderDictionary.FirstOrDefault(o => o.Key == orderKey).Value;
 
                     orderProducer.CancelOrder(orderId).GetAwaiter().GetResult();
+                }
+                else if (line.Contains("new-customer"))
+                {
+                    var commandItems = line.Split(' ');
+
+                    var customerId = Guid.Parse(commandItems[1]);
+
+                    orderProducer.CreateCustomer(customerId).GetAwaiter().GetResult();
+                }
+                else if (line == "generate")
+                {
+                    orderProducer.GenerateTestEvents().GetAwaiter().GetResult();
                 }
             }
 
