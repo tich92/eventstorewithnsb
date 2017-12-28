@@ -4,11 +4,11 @@ namespace EventStoreContext.Projections
 {
     public class CustomProjectionProvider
     {
-        private readonly ProjectionContext projectionContext;
+        private readonly ProjectionProvider projectionContext;
 
         public ProjectionList ProjectionList { get; set; }
 
-        public CustomProjectionProvider(ProjectionContext projectionContext)
+        public CustomProjectionProvider(ProjectionProvider projectionContext)
         {
             this.projectionContext = projectionContext;
 

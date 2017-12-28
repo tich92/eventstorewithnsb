@@ -8,12 +8,11 @@ using EventStore.Common.Options;
 using EventStore.Core;
 using EventStoreContext.Helpers;
 using EventStoreContext.Models;
-using EventStoreContext.Projections;
 using Newtonsoft.Json;
 
 namespace EventStoreContext
 {
-    public class ProjectionContext
+    public class ProjectionProvider
     {
         private readonly IPEndPoint tcp = new IPEndPoint(IPAddress.Loopback, 1113);
         private readonly IPEndPoint http = new IPEndPoint(IPAddress.Loopback, 2113);
@@ -31,7 +30,7 @@ namespace EventStoreContext
                 .Build();
         }
 
-        public ProjectionContext()
+        public ProjectionProvider()
         {
             var node = InitNode();
             node.StartAndWaitUntilReady().GetAwaiter().GetResult();

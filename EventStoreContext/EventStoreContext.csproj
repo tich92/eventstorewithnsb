@@ -49,14 +49,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EventContext.cs" />
+    <Compile Include="EventProvider.cs" />
     <Compile Include="Models\EventMetaData.cs" />
     <Compile Include="Models\EventModel.cs" />
     <Compile Include="Helpers\CredentialsHelper.cs" />
     <Compile Include="Helpers\EventHelpers.cs" />
     <Compile Include="Helpers\ParsingHelper.cs" />
     <Compile Include="Models\ProjectionResult.cs" />
-    <Compile Include="ProjectionContext.cs" />
+    <Compile Include="ProjectionProvider.cs" />
     <Compile Include="Projections\CustomProjectionProvider.cs" />
     <Compile Include="Projections\ProjectionItem.cs" />
     <Compile Include="Projections\ProjectionList.cs" />

@@ -38,7 +38,7 @@ namespace EventStoreContext.Helpers
             var json = Encoding.UTF8.GetString(@event.Data);
 
             var data = JsonConvert.DeserializeObject(json, GetTypeByFullName(@event.EventType));
-            
+
             return new EventModel(data, @event.EventNumber, @event.CreatedEpoch);
         }
     }

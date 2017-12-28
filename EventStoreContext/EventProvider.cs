@@ -3,13 +3,12 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
-
 using EventStoreContext.Helpers;
 using EventStoreContext.Models;
 
 namespace EventStoreContext
 {
-    public class EventContext
+    public class EventProvider
     {
         private readonly IEventStoreConnection eventStoreConnection;
 
@@ -26,7 +25,7 @@ namespace EventStoreContext
             return new IPEndPoint(address, port);
         }
 
-        public EventContext()
+        public EventProvider()
         {
             eventStoreConnection = EventStoreConnection.Create(DefaultTcp());
             eventStoreConnection.ConnectAsync().GetAwaiter().GetResult();
@@ -62,6 +61,14 @@ namespace EventStoreContext
                     CredentialsHelper.Default);
 
             return records.Events.Select(@event => @event.Event.ParseEvent()).ToList();
+        }
+
+        public async Task<IEnumerable<ResolvedEvent>> ReadStreamAsync(string streamName)
+        {
+            var records =
+                await eventStoreConnection.ReadStreamEventsForwardAsync(streamName, 0, PageSize, false,
+                    CredentialsHelper.Default);
+            return records.Events;
         }
 
         public async Task<IEnumerable<EventModel>> ReadAllEventsForwardAsync()
