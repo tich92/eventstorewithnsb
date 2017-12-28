@@ -20,6 +20,18 @@ namespace TestConsoleForEventProcessor
             var handlers = typeProvider.GetReferencedTypes(o =>
                 o.IsClass && o.Namespace.Contains("OrderProcessor") && o.Name.Contains("Handler"));
 
+            foreach (var type in handlers)
+            {
+                var methods = type.GetMethods();
+
+                //foreach (var method in methods)
+                //{
+                //    Console.WriteLine(method.GetParameters());
+                //}
+
+                Console.WriteLine(type.Name);
+            }
+
             Console.ReadLine();
         }
     }

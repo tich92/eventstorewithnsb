@@ -8,6 +8,13 @@ namespace EventProcessor.Caching
 {
     public class TypeProvider
     {
+        public IEnumerable<MethodInfo> Methods { get; set; }
+
+        public TypeProvider()
+        {
+            Methods = new List<MethodInfo>();
+        }
+
         public IEnumerable<Type> GetReferencedTypes(Func<Type, bool> predicate)
         {
             var assemblies = GetReferencedAssemblies();
