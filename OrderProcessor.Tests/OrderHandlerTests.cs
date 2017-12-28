@@ -8,30 +8,33 @@ using NServiceBus.Testing;
 using OrderProcessor.Data;
 using EventStoreContext;
 using EventStoreContext.Models;
+using NBench;
 using OrderProcessor.Handlers;
 
 namespace OrderProcessor.Tests
 {
     [TestClass]
-    public class OrderHandlerTests
+    public class OrderHandlerTests : PerformanceTestStuite<OrderHandlerTests>
     {
         private readonly OrderHandler orderHandler;
 
-        private readonly EventContext eventContext;
+        private readonly EventProvider eventContext;
 
         private readonly MappingTestConfig mappingTestConfig;
 
         private readonly OrderContext orderContext;
 
-        const string StreamName = "Order c0c8b62c-607e-4298-824c-1a73f7361f75";
+        private const string StreamName = "Order c0c8b62c-607e-4298-824c-1a73f7361f75";
+
+        private readonly ProjectionProvider projectionContext;
 
         public OrderHandlerTests()
         {
-            eventContext = new EventContext();
+            eventContext = new EventProvider();
 
             var mockOrderContext = new MockedDbContext<OrderContext>();
 
-            var projectionContext = new ProjectionContext();
+            projectionContext = new ProjectionProvider();
 
             mockOrderContext.MockTables();
 
@@ -47,6 +50,7 @@ namespace OrderProcessor.Tests
         {
             return await eventContext.ReadStreamEventsForwardAsync(StreamName);
         }
+        
 
         [TestMethod]
         public async Task GettingEventsFromStreamTest()
@@ -60,12 +64,14 @@ namespace OrderProcessor.Tests
         }
 
         [TestMethod]
+        [PerfBenchmark(RunMode = RunMode.Iterations, TestMode = TestMode.Measurement)]
+        [MemoryMeasurement(MemoryMetric.TotalBytesAllocated)]
         public async Task HandleMessagesFromStoreAsync()
         {
             var events = await GetEvents();
 
             var handler = Test.Handler(orderHandler);
-            
+
             foreach (var @event in events)
             {
                 try
@@ -83,20 +89,34 @@ namespace OrderProcessor.Tests
         }
 
         [TestMethod]
+        [PerfBenchmark(RunMode = RunMode.Iterations, TestMode = TestMode.Measurement)]
+        [MemoryMeasurement(MemoryMetric.TotalBytesAllocated)]
         public async Task PerformAllEventsTest()
         {
             Stopwatch stopwatch = new Stopwatch();
+
             stopwatch.Start();
 
-            var streams = await eventContext.GetSrteamListAsync();
+            var streams = await projectionContext.GetListOfOrderStreamsAsync();
 
             Assert.IsNotNull(streams);
-            Assert.IsTrue(streams.Any());
+            Assert.IsTrue(streams.Items.Any());
 
-            var eventProcessor = new ExecuteEventProcessor(orderContext,eventContext, mappingTestConfig.Mapper);
-            eventProcessor.MessageHandlerContext = new TestableMessageHandlerContext();
+            var eventProcessor =
+                new ExecuteEventProcessor(orderContext, eventContext, mappingTestConfig.Mapper)
+                {
+                    MessageHandlerContext = new TestableMessageHandlerContext()
+                };
 
-            foreach (var streamName in streams)
+            stopwatch.Stop();
+
+            var readEventsTime = stopwatch.ElapsedMilliseconds;
+
+            Debug.WriteLine($"Read {streams.Count} events at time {readEventsTime} ms");
+
+            stopwatch.Start();
+
+            foreach (var streamName in streams.Items)
             {
                 try
                 {
@@ -107,10 +127,42 @@ namespace OrderProcessor.Tests
                     Debug.WriteLine(e);
                 }
             }
+            stopwatch.Stop();
+            Debug.WriteLine(stopwatch.ElapsedMilliseconds);
+
+            var time = (stopwatch.ElapsedMilliseconds / 1000) / 60;
+
+            Debug.WriteLine(time);
+        }
+
+        [TestMethod]
+        [PerfBenchmark(RunMode = RunMode.Iterations, TestMode = TestMode.Measurement)]
+        [MemoryMeasurement(MemoryMetric.TotalBytesAllocated)]
+        public async Task PerformAllEventsWithExpressionTest()
+        {
+            Stopwatch stopwatch = new Stopwatch();
+
+            var list = await projectionContext.GetListOfOrderStreamsAsync();
+
+            var eventProcessor =
+                new ExecuteEventProcessor(orderContext, eventContext, mappingTestConfig.Mapper)
+                {
+                    MessageHandlerContext = new TestableMessageHandlerContext()
+                };
+
+            stopwatch.Start();
+
+            foreach (var streamName in list.Items)
+            {
+                await eventProcessor.PerformEventsByStreamWithExpression(streamName, orderHandler);
+            }
 
             stopwatch.Stop();
-            Debug.WriteLine(stopwatch.Elapsed);
+            Debug.WriteLine(stopwatch.ElapsedMilliseconds);
+            
+            var time = (stopwatch.ElapsedMilliseconds / 1000) / 60;
 
+            Debug.WriteLine(time);
         }
     }
 }

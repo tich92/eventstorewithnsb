@@ -4,7 +4,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using Moq;
-using OrderProcessor.Models;
 
 namespace OrderProcessor.Tests
 {
@@ -36,6 +35,9 @@ namespace OrderProcessor.Tests
                 var method = typeof(EntityFrameworkMockHelper).GetMethod("MockDbSet")
                     ?.MakeGenericMethod(dbSetGenericType);
                 
+                if(method == null)
+                    throw new InvalidOperationException();
+
                 mockedContext.Setup(lambdaExpression).Returns(method.Invoke(null, new[] {listForFakeTable}));
                 mockedContext.Tables.Add(prop.Name, listForFakeTable);
             }
