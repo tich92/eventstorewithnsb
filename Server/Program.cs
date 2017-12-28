@@ -16,7 +16,7 @@ namespace Server
             Console.WriteLine("Start workinkg server . . . ");
             Console.WriteLine("Waiting messages . . . ");
 
-            var projectionContext = new ProjectionContext();
+            var projectionContext = new ProjectionProvider();
 
             var customerProducer = new CustomerProducer(projectionContext, instance);
 

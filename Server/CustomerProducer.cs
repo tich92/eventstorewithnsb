@@ -8,10 +8,10 @@ namespace Server
 {
     public class CustomerProducer
     {
-        private readonly ProjectionContext projectionContext;
+        private readonly ProjectionProvider projectionContext;
         private readonly IMessageSession messageSession;
 
-        public CustomerProducer(ProjectionContext projectionContext, IMessageSession messageSession)
+        public CustomerProducer(ProjectionProvider projectionContext, IMessageSession messageSession)
         {
             this.projectionContext = projectionContext;
             this.messageSession = messageSession;

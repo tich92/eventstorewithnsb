@@ -10,11 +10,11 @@ namespace Server.Handlers
     public class CustomerHandler : IHandleMessages<CreateCustomerCommand>
     {
         private readonly IMapper mapper;
-        private readonly EventContext eventContext;
+        private readonly EventProvider eventContext;
 
         private const string DefaultStreamName = "Customer";
 
-        public CustomerHandler(IMapper mapper, EventContext eventContext)
+        public CustomerHandler(IMapper mapper, EventProvider eventContext)
         {
             this.mapper = mapper;
             this.eventContext = eventContext;

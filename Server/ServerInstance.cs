@@ -26,9 +26,12 @@ namespace Server
             conventions.DefiningCommandsAs(type => type.Namespace != null && type.Namespace.Contains("Commands"));
             conventions.DefiningEventsAs(type => type.Namespace != null && type.Namespace.Contains("Events"));
 
+            endpointConfiguration.SendFailedMessagesTo("error");
+            endpointConfiguration.AuditProcessedMessagesTo("audit");
+
             var mapping = new Mapping();
 
-            var eventStore = new EventContext();
+            var eventStore = new EventProvider();
 
             endpointConfiguration.RegisterComponents(reg =>
             {

@@ -13,9 +13,9 @@ namespace Server.Handlers
         IHandleMessages<CancelOrderCommand>
     {
         private IMapper mapper;
-        private EventContext eventContext;
+        private EventProvider eventContext;
 
-        public OrderHandler(IMapper mapper, EventContext eventContext)
+        public OrderHandler(IMapper mapper, EventProvider eventContext)
         {
             this.mapper = mapper;
             this.eventContext = eventContext;
