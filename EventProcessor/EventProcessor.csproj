@@ -45,6 +45,14 @@
   <ItemGroup>
     <Compile Include="Caching\FuncCacheProvider.cs" />
     <Compile Include="Caching\TypeProvider.cs" />
+    <Compile Include="IoC\Container.cs" />
+    <Compile Include="IoC\IContainer.cs" />
+    <Compile Include="IoC\MappingKey.cs" />
+    <Compile Include="IoC\ToBeDelete\External.cs" />
+    <Compile Include="IoC\ToBeDelete\IExternal.cs" />
+    <Compile Include="IoC\ToBeDelete\IService.cs" />
+    <Compile Include="IoC\ToBeDelete\Service.cs" />
+    <Compile Include="NServiceBusHandlerProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

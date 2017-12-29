@@ -25,7 +25,7 @@ namespace EventProcessor.Caching
 
         private static IEnumerable<Assembly> GetReferencedAssemblies()
         {
-            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => !a.FullName.Contains("System")).ToList();
             var loadedPaths = loadedAssemblies.Where(a => !a.IsDynamic).Select(a => a.Location).ToArray();
 
             var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
